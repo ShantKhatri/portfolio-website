@@ -8,15 +8,25 @@ interface Experience {
 
 export const experiences: Experience[] = [
   {
-    title: 'Machine Learning Engineer Intern',
-    company: 'OneStack Technologies Pvt Ltd',
+    title: 'Independent ML Research Engineer',
+    company: 'Self-driven',
     period: 'Sept 2024 - Present',
     location: 'New Delhi, India',
     description: [
-      'Built a pneumonia detection model with 92% accuracy using TensorFlow & PyTorch',
-      'Developed NLP sentiment analysis using BERT, boosting feedback efficiency by 40%',
-      'Reduced inference time by 30% using quantization and pruning',
-      'Built scalable data pipelines handling 10M+ records'
+      'Conducting applied ML/AI research with a focus on real-world healthcare, NLP, and computer vision problems',
+      'Developed novel prototypes and filed patents for intelligent systems',
+      'Built and deployed models using TensorFlow, PyTorch, and deep learning APIs',
+    ]
+  },
+  {
+    title: 'Software Engineer',
+    company: 'Shucon Tech',
+    period: 'Feb 2025 - Present',
+    location: 'New Delhi, India',
+    description: [
+      'Engineered robust and intuitive UI for the Hospital Management System (HMS) using React.js.',
+      'Delivered performant and scalable healthcare tech interfaces, enhancing operational efficiency and user satisfaction',
+      'Collaborated with backend and design teams to ensure seamless integration and responsive experience',
     ]
   },
   {

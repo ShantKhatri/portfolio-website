@@ -12,7 +12,7 @@ export const achievements: Achievement[] = [
     organization: 'Eclipse Foundation',
     year: '2024',
     description: 'Selected as a contributor for the Eclipse 4diac project, working on automation tools for graphical editors.',
-    link: 'https://summerofcode.withgoogle.com/'
+    link: 'https://gist.github.com/ShantKhatri/b1c6f1a53f32b74e10c2e8617ff751d2'
   },
   {
     title: 'Code For GovTech 2024 (DMP) Contributor',

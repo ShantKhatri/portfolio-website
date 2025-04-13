@@ -41,7 +41,7 @@ const Navbar: React.FC = () => {
     // { href: '#blog', text: 'Blog' },
     { href: '#education', text: 'Education' },
     { href: '#achievements', text: 'Achievements' },
-    { href: '#contact', text: 'Contact' }
+    // { href: '#contact', text: 'Contact' }
   ];
   
   const handleClick = () => {
@@ -83,10 +83,27 @@ const Navbar: React.FC = () => {
                 </Link>
               ))}
               <Link 
-                href="/blog" 
-                className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-800/40 hover:text-white transition-colors"
+                href="#contact" 
+                className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
+                  bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
+                  transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg
+                  shadow-sm shadow-purple-500/20 border border-purple-500/30 flex items-center justify-center"
               >
-                All Posts
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  className="h-4 w-4 mr-1" 
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+                  />
+                </svg>
+                Contact
               </Link>
             </div>
           </div>
@@ -131,11 +148,28 @@ const Navbar: React.FC = () => {
             </Link>
           ))}
           <Link 
-            href="/blog" 
-            className="block px-3 py-2 rounded-md text-base font-medium text-gray-300 hover:bg-gray-800/60 hover:text-white"
+            href="#contact" 
+            className="block mt-3 mx-1 px-4 py-2.5 rounded-lg text-base font-medium text-white
+              bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
+              transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg
+              shadow-md shadow-purple-500/20 border border-purple-500/30 flex items-center justify-center"
             onClick={handleClick}
           >
-            All Posts
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              className="h-5 w-5 mr-1.5" 
+              fill="none" 
+              viewBox="0 0 24 24" 
+              stroke="currentColor"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
+              />
+            </svg>
+            Contact Me
           </Link>
         </div>
       </div>

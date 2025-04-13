@@ -16,9 +16,13 @@ const educationWithDetails = education.map(edu => ({
     'Big Data Processing & Analytics'
   ] : [
     'Data Structures & Algorithms',
-    'Machine Learning Fundamentals',
+    'Analysis and Design of Algorithms',
+    'Machine Learning',
     'Software Engineering Principles',
-    'Web & Mobile Application Development',
+    'Operating Systems',
+    'Database Management Systems',
+    'Object-Oriented Programming',
+    'Computer Architecture',
     'Computer Networks & Security'
   ]
 }));
