@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Globe, Code, Database, Cpu, Camera, Paintbrush } from 'lucide-react';
+import { Globe, Code, Database, Cpu, Camera, Paintbrush } from 'lucide-react';
 import { Project } from '../../data/projectsData';
 
 // Icon mapper function to render the appropriate icon
@@ -30,7 +30,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <h3 className="text-xl font-bold mb-2">{project.title}</h3>
         <p className="text-gray-400 mb-4">{project.description}</p>
         <div className="flex flex-wrap gap-2 mb-4">
-          {project.tech.map((tech: any) => (
+          {project.tech.map((tech: string) => (
             <span
               key={tech}
               className="text-xs px-2 py-1 rounded-full bg-gray-800 text-gray-300"

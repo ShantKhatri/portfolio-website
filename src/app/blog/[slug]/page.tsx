@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Clock, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
-import ParticleBackground from '../../../components/ParticleBackground';
+import ParticleBackground from '../../../components/ui/ParticleBackground';
 import Navbar from '../../../components/Navbar';
 
 // Import blog post type from your types file or define it here

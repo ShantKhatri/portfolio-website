@@ -31,7 +31,7 @@ const ParticleBackground: React.FC = () => {
     
     // Create particles
     const particlesGeometry = new THREE.BufferGeometry();
-    const count = 2000;
+    const count = 1000;
     
     // Positions array (3 values per vertex - x, y, z)
     const positions = new Float32Array(count * 3);

@@ -38,9 +38,9 @@ const ContactSection: React.FC = () => {
       
       setSubmitMessage('Thank you! Your message has been sent successfully.');
       setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
+    } catch (error: unknown) {
       setSubmitError(true);
-      setSubmitMessage('Something went wrong. Please try again later or contact me directly via email.');
+      setSubmitMessage(`Something went wrong: ${error instanceof Error ? error.message : 'Please try again later or contact me directly via email.'}`);
     } finally {
       setIsSubmitting(false);
     }

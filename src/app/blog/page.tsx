@@ -3,8 +3,17 @@ import Layout from '../../components/layout/Layout';
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Tag } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { blogPosts } from '@/data/blogData';
+
+interface BlogPost {
+  id: string;
+  title: string;
+  excerpt: string;
+  slug: string;
+  tags: string[];
+  coverImage: string;
+}
 
 const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,7 +22,7 @@ const BlogPage: React.FC = () => {
   // Extract all unique tags from blog posts
   const allTags = Array.from(new Set(blogPosts.flatMap(post => post.tags)));
   
-  const filteredPosts = blogPosts.filter((post: any) => {
+  const filteredPosts = blogPosts.filter((post: BlogPost) => {
     const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     
@@ -64,7 +73,7 @@ const BlogPage: React.FC = () => {
           <div>
             <h2 className="text-lg font-medium mb-3">Filter by Topic:</h2>
             <div className="flex flex-wrap gap-2">
-              {allTags.map((tag: any) => (
+              {allTags.map((tag: string) => (
                 <button
                   key={tag}
                   onClick={() => toggleTag(tag)}
@@ -84,7 +93,7 @@ const BlogPage: React.FC = () => {
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredPosts.length > 0 ? (
-            filteredPosts.map((post: any) => (
+            filteredPosts.map((post: BlogPost) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
                 <div className="bg-gray-900/50 rounded-xl overflow-hidden group hover:bg-gray-800/70 transition-all duration-300 h-full flex flex-col">
                   <div className="relative h-48 w-full">

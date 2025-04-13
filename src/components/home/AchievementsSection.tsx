@@ -4,7 +4,15 @@ import { Award, ExternalLink } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
 import { achievements } from '../../data/achievementsData'; // Updated import path
 
-const AchievementCard = ({ achievement, index }: { achievement: any, index: number }) => {
+interface Achievement {
+  title: string;
+  organization: string;
+  year: string;
+  description?: string;
+  link?: string;
+}
+
+const AchievementCard = ({ achievement }: { achievement: Achievement, index: number }) => {
   const [hovered, setHovered] = useState(false);
 
   return (
