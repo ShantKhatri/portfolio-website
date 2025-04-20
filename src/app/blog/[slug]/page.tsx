@@ -15,6 +15,22 @@ import Navbar from '../../../components/Navbar';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
 
+const processMarkdown = (content: string) => {
+  if (!content) return '';
+  
+  // Fix common markdown formatting issues
+  return content
+    // Replace escaped newlines with actual newlines
+    .replace(/\\n/g, "\n")
+    // Ensure headers have spaces after #
+    .replace(/^(#{1,6})([^#\s])/gm, '$1 $2')
+    // Ensure proper spacing around lists
+    .replace(/^(-|\d+\.)\s*([^\n])/gm, '$1 $2')
+    // Fix table formatting if needed
+    .replace(/\|(\S)/g, '| $1')
+    .replace(/(\S)\|/g, '$1 |');
+};
+
 const BlogPostPage: React.FC = () => {
   const pathname = usePathname();
   const slug = pathname.split('/').pop();
@@ -141,8 +157,17 @@ const BlogPostPage: React.FC = () => {
                 [rehypeAutolinkHeadings, { behavior: 'wrap' }]
               ]}
               components={{
-                // Customize how different elements are rendered
-                img: ({ src, alt }) => (
+                h1: ({...props}) => <h1 className="text-3xl font-bold mt-8 mb-4 text-white" {...props} />,
+                h2: ({...props}) => <h2 className="text-2xl font-bold mt-8 mb-3 text-white" {...props} />,
+                h3: ({...props}) => <h3 className="text-xl font-bold mt-6 mb-3 text-white" {...props} />,
+                p: ({...props}) => <p className="mb-4 text-gray-300 leading-relaxed" {...props} />,
+                ul: ({...props}) => <ul className="mb-4 ml-4 list-disc space-y-2 text-gray-300" {...props} />,
+                ol: ({...props}) => <ol className="mb-4 ml-4 list-decimal space-y-2 text-gray-300" {...props} />,
+                li: ({...props}) => <li className="pl-1 leading-relaxed" {...props} />,
+                blockquote: ({...props}) => (
+                  <blockquote className="pl-4 border-l-4 border-purple-500 italic my-6 text-gray-400" {...props} />
+                ),
+                img: ({src, alt}) => (
                   <div className="my-8">
                     <Image 
                       src={src || ''} 
@@ -153,29 +178,49 @@ const BlogPostPage: React.FC = () => {
                     />
                   </div>
                 ),
-                // You can customize other elements as needed
                 a: (props) => (
                   <a {...props} className="text-purple-400 hover:text-purple-300 transition-colors" />
                 ),
-                code: ({ className, children, ...props }) => {
-                  const isInline = !className?.includes('language-');
+                code: ({className, children, ...props}) => {
+                  const match = /language-(\w+)/.exec(className || '');
+                  const language = match ? match[1] : '';
+                  const isInline = !match;
+                  
                   return isInline ? (
-                    <code className="bg-gray-800 px-1 py-0.5 rounded text-sm" {...props}>{children}</code>
+                    <code className="bg-gray-800 px-1 py-0.5 rounded text-sm font-mono text-gray-300" {...props}>
+                      {children}
+                    </code>
                   ) : (
-                    <code className="block bg-gray-900 p-4 rounded-md overflow-x-auto my-6" {...props}>{children}</code>
+                    <div className="overflow-hidden rounded-md bg-gray-900 my-6">
+                      {language && (
+                        <div className="bg-gray-800 px-4 py-1 text-sm text-gray-400 border-b border-gray-700">
+                          {language}
+                        </div>
+                      )}
+                      <pre className="overflow-x-auto p-4 text-sm">
+                        <code className="language-{language}">{children}</code>
+                      </pre>
+                    </div>
                   );
                 },
-                pre: (props) => (
-                  <pre className="bg-transparent p-0" {...props} />
-                ),
+                pre: ({...props}) => <pre className="bg-transparent p-0" {...props} />,
                 table: (props) => (
                   <div className="overflow-x-auto my-8">
-                    <table className="min-w-full" {...props} />
+                    <table className="min-w-full border-collapse border border-gray-800" {...props} />
                   </div>
                 ),
+                th: ({...props}) => (
+                  <th className="px-4 py-2 bg-gray-800 border border-gray-700 text-left" {...props} />
+                ),
+                td: ({...props}) => (
+                  <td className="px-4 py-2 border border-gray-800" {...props} />
+                ),
+                hr: ({...props}) => <hr className="my-8 border-gray-800" {...props} />,
+                strong: ({...props}) => <strong className="font-bold text-white" {...props} />,
+                em: ({...props}) => <em className="italic" {...props} />,
               }}
             >
-              {post.content}
+              {processMarkdown(post.content)}
             </ReactMarkdown>
           </article>
         )}

@@ -4,38 +4,7 @@ import { ArrowRight, Clock, Tag } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
 
 // Create some sample blog posts if you don't have a data file
-const blogPosts = [
-  {
-    id: '1',
-    slug: 'modern-react-patterns',
-    title: 'Modern React Patterns for 2025',
-    excerpt: 'Discover the latest patterns and best practices for building efficient React applications.',
-    coverImage: '/images/blog/react.jpg',
-    date: 'April 10, 2025',
-    readTime: '6 min read',
-    tags: ['React', 'Frontend', 'JavaScript']
-  },
-  {
-    id: '2',
-    slug: 'typescript-advanced-techniques',
-    title: 'Advanced TypeScript Techniques You Should Know',
-    excerpt: 'Take your TypeScript skills to the next level with these advanced patterns and techniques.',
-    coverImage: '/images/blog/typescript.jpg',
-    date: 'March 22, 2025',
-    readTime: '8 min read',
-    tags: ['TypeScript', 'JavaScript']
-  },
-  {
-    id: '3',
-    slug: 'nextjs-vs-remix',
-    title: 'Next.js vs Remix: Choosing the Right Framework',
-    excerpt: 'A detailed comparison to help you choose between these modern React frameworks.',
-    coverImage: '/images/blog/nextjs.jpg',
-    date: 'March 5, 2025',
-    readTime: '7 min read',
-    tags: ['Next.js', 'Remix', 'React']
-  }
-];
+
 
 const BlogSection: React.FC = () => {
   return (

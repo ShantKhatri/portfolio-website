@@ -2,7 +2,8 @@ import {
   collection, 
   getDocs, 
   query, 
-  where, 
+  where,
+  addDoc,
   orderBy, 
   limit 
 } from 'firebase/firestore';
@@ -110,5 +111,20 @@ export async function getRelatedBlogPosts(
   } catch (error) {
     console.error("Error fetching related blog posts:", error);
     return [];
+  }
+}
+
+
+export async function addBlogPost(blogData: Omit<BlogPost, 'id'>): Promise<string> {
+  try {
+    const docRef = await addDoc(blogCollection, {
+      ...blogData,
+      createdAt: new Date(),
+    });
+    
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding blog post:", error);
+    throw error;
   }
 }
