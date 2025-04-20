@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import Navbar from '../components/Navbar';
 import "./globals.css";
 import JsonLd from '../components/JsonLd';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 export const metadata: Metadata = {
   title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
@@ -103,7 +104,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="bg-black text-white">
         <JsonLd />
         <Navbar />
-        <main className="relative z-10">{children}</main>
+        <AuthProvider>
+          <main className="relative z-10">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

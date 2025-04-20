@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.16",
+    "date-fns": "^4.1.0",
     "firebase": "^11.6.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.477.0",

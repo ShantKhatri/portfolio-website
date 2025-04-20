@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
-import Cookies from 'js-cookie';
-import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,8 +12,7 @@ const Navbar: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   
   const pathname = usePathname();
-  const router = useRouter();
-  const username = Cookies.get('admin_user') || 'Admin';
+  const { currentUser, isAdmin, logout } = useAuth();
   
   const isAdminRoute = pathname?.startsWith('/admin');
   const isLoginPage = pathname === '/login';
@@ -59,15 +57,6 @@ const Navbar: React.FC = () => {
     setIsOpen(false);
   };
   
-  const handleLogout = () => {
-    // Remove auth cookies
-    Cookies.remove('admin_authenticated');
-    Cookies.remove('admin_user');
-    
-    // Redirect to login page
-    router.push('/login');
-  };
-  
   // Don't render navbar on login page
   if (isLoginPage) {
     return null;
@@ -79,6 +68,7 @@ const Navbar: React.FC = () => {
       <nav className="fixed top-0 w-full z-50 bg-gray-800 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            {/* Left side - Logo and links */}
             <div className="flex items-center">
               <Link href="/admin/blog" className="font-bold text-xl">
                 <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
@@ -97,19 +87,20 @@ const Navbar: React.FC = () => {
                 >
                   Blog Posts
                 </Link>
-                <Link 
-                  href="/admin/messages" 
+                <Link
+                  href="/admin/messages"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    pathname === '/admin/messages'
+                    pathname === '/admin/messages' 
                       ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
-                  Contact Messages
+                  Messages
                 </Link>
               </div>
             </div>
             
+            {/* Right side - User menu */}
             <div className="flex items-center">
               <Link 
                 href="/"
@@ -123,14 +114,17 @@ const Navbar: React.FC = () => {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center text-sm px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 focus:outline-none"
                 >
-                  <span className="mr-2">{username}</span>
+                  <span className="mr-2">{currentUser?.email || 'Admin'}</span>
                   <ChevronDown className="h-4 w-4" />
                 </button>
                 
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 py-1 bg-gray-700 rounded-md shadow-lg z-10">
                     <button 
-                      onClick={handleLogout}
+                      onClick={() => {
+                        logout();
+                        router.push('/login');
+                      }}
                       className="flex items-center w-full px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
                     >
                       <LogOut className="h-4 w-4 mr-2" />
@@ -206,7 +200,7 @@ const Navbar: React.FC = () => {
               </Link>
               
               {/* Admin link - only visible when authenticated */}
-              {Cookies.get('admin_authenticated') === 'true' && (
+              {isAdmin && (
                 <Link 
                   href="/admin/blog" 
                   className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
@@ -284,7 +278,7 @@ const Navbar: React.FC = () => {
           </Link>
           
           {/* Admin link in mobile menu - only visible when authenticated */}
-          {Cookies.get('admin_authenticated') === 'true' && (
+          {isAdmin && (
             <Link 
               href="/admin/blog" 
               className="block mt-3 mx-1 px-4 py-2.5 rounded-lg text-base font-medium text-white

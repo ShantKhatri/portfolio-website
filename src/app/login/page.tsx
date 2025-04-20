@@ -1,17 +1,31 @@
 "use client"
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2, Lock } from 'lucide-react';
-import Image from 'next/image';
 import Cookies from 'js-cookie';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+
+// For static login until you implement proper user management
+const ADMIN_EMAIL = "admin@example.com";
+const ADMIN_PASSWORD = "portfolio2025";
 
 const LoginPage = () => {
   const router = useRouter();
-  const [username, setUsername] = useState('');
+  const { currentUser, isAdmin } = useAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (isAdmin) {
+      router.push('/admin/blog');
+    }
+  }, [isAdmin, router]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -19,16 +33,37 @@ const LoginPage = () => {
     setIsLoading(true);
 
     try {
-      // Simple static authentication
-      if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        // Set authentication cookie (expires in 24 hours)
-        Cookies.set('admin_authenticated', 'true', { expires: 1 });
-        Cookies.set('admin_user', username, { expires: 1 });
+      // First try Firebase Auth
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+        const token = await userCredential.user.getIdToken();
+        sessionStorage.setItem('firebaseToken', token);
         
-        // Redirect to admin dashboard
+        Cookies.set('admin_authenticated', 'true', { expires: 1 });
+        Cookies.set('admin_user', userCredential.user.email || 'admin', { expires: 1 });
+        
+        console.log("Login successful - redirecting");
+        router.push('/admin/blog');
+        return;
+      } catch (firebaseError: any) {
+        console.log("Firebase auth failed, trying fallback", firebaseError);
+        if (firebaseError.code === 'auth/user-not-found' || 
+            firebaseError.code === 'auth/wrong-password') {
+        } else {
+          setError(`Firebase auth error: ${firebaseError.message}`);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // Fallback to static credentials
+      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+        Cookies.set('admin_authenticated', 'true', { expires: 1 });
+        Cookies.set('admin_user', 'admin', { expires: 1 });
         router.push('/admin/blog');
       } else {
-        setError('Invalid username or password');
+        setError('Invalid email or password');
       }
     } catch (err) {
       setError('Something went wrong. Please try again.');
@@ -58,14 +93,14 @@ const LoginPage = () => {
           
           <form onSubmit={handleSubmit}>
             <div className="mb-6">
-              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                Username
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                Email
               </label>
               <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 required
               />

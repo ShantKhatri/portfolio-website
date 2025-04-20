@@ -1,47 +1,9 @@
 "use client"
-import { useState } from 'react';
-import { Mail, MapPin, Phone, Send, Github, Linkedin, ExternalLink } from 'lucide-react';
+import { Mail, MapPin, Phone, Github, Linkedin, ExternalLink } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
-import { submitContactForm } from '@/services/contactService';
+import ContactForm from '../contact/ContactForm';
 
 const ContactSection: React.FC = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
-  const [submitError, setSubmitError] = useState(false);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitMessage('');
-    setSubmitError(false);
-    
-    try {
-      // Submit to Firebase
-      await submitContactForm(formData);
-      
-      setSubmitMessage('Thank you! Your message has been sent successfully.');
-      setFormData({ name: '', email: '', message: '' });
-    } catch (error: unknown) {
-      setSubmitError(true);
-      setSubmitMessage(`Something went wrong: ${error instanceof Error ? error.message : 'Please try again later or contact me directly via email.'}`);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <section id="contact" className="py-20 px-8 bg-black/30">
@@ -142,77 +104,7 @@ const ContactSection: React.FC = () => {
           {/* Contact form */}
           <div className="bg-gray-900/30 backdrop-blur-sm rounded-xl p-8 border border-gray-800/50 hover:border-gray-700/50 transition-colors">
             <h3 className="text-xl font-semibold mb-6">Send a Message</h3>
-            <form onSubmit={handleSubmit} className="space-y-6" suppressHydrationWarning>
-              <div className="group">
-                <label htmlFor="name" className="block text-sm font-medium mb-2 group-focus-within:text-purple-400 transition-colors">Name</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="Your name"
-                />
-              </div>
-              
-              <div className="group">
-                <label htmlFor="email" className="block text-sm font-medium mb-2 group-focus-within:text-purple-400 transition-colors">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="your@email.com"
-                />
-              </div>
-              
-              <div className="group">
-                <label htmlFor="message" className="block text-sm font-medium mb-2 group-focus-within:text-purple-400 transition-colors">Message</label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={6}
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none transition-all"
-                  placeholder="I'm interested in collaborating on..."
-                ></textarea>
-              </div>
-              
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full flex items-center justify-center px-6 py-3 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white font-medium rounded-lg transition-all duration-300 disabled:opacity-70 transform hover:translate-y-[-2px]"
-              >
-                {isSubmitting ? (
-                  <>
-                    <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></span>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5 mr-2" />
-                    Send Message
-                  </>
-                )}
-              </button>
-              
-              {submitMessage && (
-                <div className={`p-4 rounded-lg ${
-                  submitError 
-                    ? 'bg-red-500/20 text-red-300 border border-red-800' 
-                    : 'bg-green-500/20 text-green-300 border border-green-800'
-                } animate-fadeIn`}>
-                  {submitMessage}
-                </div>
-              )}
-            </form>
+            <ContactForm />
           </div>
         </div>
       </div>
