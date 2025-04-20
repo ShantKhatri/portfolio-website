@@ -1,15 +1,28 @@
 "use client"
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const pathname = usePathname();
+  const router = useRouter();
+  const username = Cookies.get('admin_user') || 'Admin';
+  
+  const isAdminRoute = pathname?.startsWith('/admin');
+  const isLoginPage = pathname === '/login';
 
-  // Handle scroll events
+  // Handle scroll events - only for public pages
   useEffect(() => {
+    if (isAdminRoute || isLoginPage) return;
+    
     const handleScroll = () => {
       // Add background when scrolled
       if (window.scrollY > 50) {
@@ -31,23 +44,109 @@ const Navbar: React.FC = () => {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isAdminRoute, isLoginPage]);
 
   const navLinks = [
     { href: '#home', text: 'Home' },
     { href: '#projects', text: 'Projects' },
     { href: '#skills', text: 'Skills' },
     { href: '#experience', text: 'Experience' },
-    // { href: '#blog', text: 'Blog' },
     { href: '#education', text: 'Education' },
     { href: '#achievements', text: 'Achievements' },
-    // { href: '#contact', text: 'Contact' }
   ];
   
   const handleClick = () => {
     setIsOpen(false);
   };
+  
+  const handleLogout = () => {
+    // Remove auth cookies
+    Cookies.remove('admin_authenticated');
+    Cookies.remove('admin_user');
+    
+    // Redirect to login page
+    router.push('/login');
+  };
+  
+  // Don't render navbar on login page
+  if (isLoginPage) {
+    return null;
+  }
+  
+  // Render AdminHeader for admin routes
+  if (isAdminRoute) {
+    return (
+      <nav className="fixed top-0 w-full z-50 bg-gray-800 border-b border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Link href="/admin/blog" className="font-bold text-xl">
+                <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+                  PK Admin
+                </span>
+              </Link>
+              
+              <div className="ml-10 hidden md:flex space-x-4">
+                <Link 
+                  href="/admin/blog" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    pathname === '/admin/blog' 
+                      ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  Blog Posts
+                </Link>
+                <Link 
+                  href="/admin/messages" 
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    pathname === '/admin/messages'
+                      ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  Contact Messages
+                </Link>
+              </div>
+            </div>
+            
+            <div className="flex items-center">
+              <Link 
+                href="/"
+                className="mr-4 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+              >
+                View Site
+              </Link>
+              
+              <div className="relative">
+                <button 
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center text-sm px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 focus:outline-none"
+                >
+                  <span className="mr-2">{username}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+                
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 py-1 bg-gray-700 rounded-md shadow-lg z-10">
+                    <button 
+                      onClick={handleLogout}
+                      className="flex items-center w-full px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
+  // Default: render public navbar
   return (
     <nav 
       className={`fixed top-0 w-full z-50 transition-all duration-300 ${
@@ -105,6 +204,18 @@ const Navbar: React.FC = () => {
                 </svg>
                 Contact
               </Link>
+              
+              {/* Admin link - only visible when authenticated */}
+              {Cookies.get('admin_authenticated') === 'true' && (
+                <Link 
+                  href="/admin/blog" 
+                  className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
+                    bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500
+                    transition-all duration-300"
+                >
+                  Admin
+                </Link>
+              )}
             </div>
           </div>
           
@@ -171,6 +282,19 @@ const Navbar: React.FC = () => {
             </svg>
             Contact Me
           </Link>
+          
+          {/* Admin link in mobile menu - only visible when authenticated */}
+          {Cookies.get('admin_authenticated') === 'true' && (
+            <Link 
+              href="/admin/blog" 
+              className="block mt-3 mx-1 px-4 py-2.5 rounded-lg text-base font-medium text-white
+                bg-gradient-to-r from-gray-700 to-gray-600
+                transition-all duration-300 ease-in-out"
+              onClick={handleClick}
+            >
+              Admin Dashboard
+            </Link>
+          )}
         </div>
       </div>
     </nav>

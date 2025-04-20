@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { Loader2, ArrowLeft, ImagePlus, X, Plus, Check } from 'lucide-react';
 import { addBlogPost } from '@/services/blogService';
 import { uploadBlogImage } from '@/services/storageService';
+import AdminHeader from '@/components/admin/AdminHeader';
 
 const BlogUploadForm = () => {
   const router = useRouter();
@@ -149,8 +150,9 @@ const BlogUploadForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-gray-900 text-white">
+      <AdminHeader />
+      <div className="max-w-5xl mx-auto p-8">
         <div className="mb-8 flex items-center justify-between">
           <button 
             onClick={() => router.push('/admin/blog')}
