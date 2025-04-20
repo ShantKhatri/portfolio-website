@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Trash2, Edit, Plus, Loader2, Search } from 'lucide-react';
-import { getAllBlogPosts } from '@/services/blogService';
+import { getAllBlogPosts, deleteBlogPost } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
 import AdminHeader from '@/components/admin/AdminHeader';
 
@@ -11,21 +11,54 @@ const AdminBlogList = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [deleteConfirmation, setDeleteConfirmation] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   
   useEffect(() => {
-    async function fetchBlogs() {
-      try {
-        const blogData = await getAllBlogPosts();
-        setBlogs(blogData);
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    
     fetchBlogs();
   }, []);
+
+  async function fetchBlogs() {
+    setIsLoading(true);
+    try {
+      const blogData = await getAllBlogPosts();
+      setBlogs(blogData);
+    } catch (error) {
+      console.error("Error fetching blogs:", error);
+      setError("Failed to load blog posts. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  
+  const openDeleteConfirmation = (id: string) => {
+    setDeleteConfirmation(id);
+  };
+  
+  const handleDelete = async (id: string, coverImage?: string) => {
+    setIsDeleting(true);
+    try {
+      const blogToDelete = blogs.find(blog => blog.id === id);
+      const blogTitle = blogToDelete?.title || 'Blog post';
+      
+      await deleteBlogPost(id, coverImage);
+      
+      setBlogs(blogs.filter(blog => blog.id !== id));
+      setSuccess(`"${blogTitle}" has been deleted successfully.`);
+      
+      setTimeout(() => setSuccess(null), 3000);
+    } catch (error) {
+      console.error("Error deleting blog post:", error);
+      setError("Failed to delete blog post. Please try again.");
+      
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setIsDeleting(false);
+      setDeleteConfirmation(null);
+    }
+  };
   
   const filteredBlogs = blogs.filter(blog => 
     blog.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -46,6 +79,19 @@ const AdminBlogList = () => {
               <Plus className="w-5 h-5 mr-2" /> New Blog Post
             </Link>
           </div>
+          
+          {/* Status Messages */}
+          {error && (
+            <div className="bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-md mb-4">
+              {error}
+            </div>
+          )}
+          
+          {success && (
+            <div className="bg-green-900/30 border border-green-700 text-green-300 px-4 py-3 rounded-md mb-4">
+              {success}
+            </div>
+          )}
           
           {/* Search */}
           <div className="mb-6">
@@ -126,7 +172,7 @@ const AdminBlogList = () => {
                           </Link>
                           <button 
                             className="p-2 bg-red-900/30 hover:bg-red-900/50 rounded-md"
-                            onClick={() => {/* Add delete logic here */}}
+                            onClick={() => openDeleteConfirmation(blog.id)}
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -140,6 +186,50 @@ const AdminBlogList = () => {
           )}
         </div>
       </div>
+      
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmation && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 max-w-md w-full p-6 rounded-lg shadow-xl border border-gray-700">
+            <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
+            <p className="text-gray-300 mb-6">
+              Are you sure you want to delete this blog post? 
+              This action cannot be undone and all associated data will be permanently removed.
+            </p>
+            <div className="flex justify-end space-x-4">
+              <button
+                disabled={isDeleting}
+                onClick={() => setDeleteConfirmation(null)}
+                className="px-4 py-2 bg-gray-700 text-white rounded-md hover:bg-gray-600"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={isDeleting}
+                onClick={() => {
+                  const blogToDelete = blogs.find(b => b.id === deleteConfirmation);
+                  if (blogToDelete) {
+                    handleDelete(deleteConfirmation, blogToDelete.coverImage);
+                  }
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

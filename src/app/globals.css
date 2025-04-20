@@ -19,3 +19,20 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.blog-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+/* For image captions */
+.blog-content img + em {
+  display: block;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #9ca3af; /* gray-400 */
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}

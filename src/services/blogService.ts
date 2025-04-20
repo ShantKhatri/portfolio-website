@@ -1,14 +1,19 @@
 import { 
   collection, 
+  addDoc, 
   getDocs, 
+  doc, 
+  getDoc, 
+  deleteDoc, 
+  updateDoc, 
   query, 
-  where,
-  addDoc,
   orderBy, 
-  limit 
+  where, 
+  serverTimestamp
 } from 'firebase/firestore';
-import type { BlogPost } from '../types/blog';
 import { db } from '@/lib/firebase';
+import { deleteImage } from './storageService';
+import type { BlogPost } from '@/types/blog';
 
 // Collection reference
 const blogCollection = collection(db, 'blog-posts');
@@ -114,7 +119,6 @@ export async function getRelatedBlogPosts(
   }
 }
 
-
 export async function addBlogPost(blogData: Omit<BlogPost, 'id'>): Promise<string> {
   try {
     const docRef = await addDoc(blogCollection, {
@@ -125,6 +129,62 @@ export async function addBlogPost(blogData: Omit<BlogPost, 'id'>): Promise<strin
     return docRef.id;
   } catch (error) {
     console.error("Error adding blog post:", error);
+    throw error;
+  }
+}
+
+export async function getBlogPostById(id: string): Promise<BlogPost | null> {
+  try {
+    const docRef = doc(db, 'blog-posts', id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      return {
+        id: docSnap.id,
+        ...docSnap.data()
+      } as BlogPost;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error fetching blog post:", error);
+    throw error;
+  }
+}
+
+// Update an existing blog post
+export async function updateBlogPost(id: string, postData: any): Promise<void> {
+  try {
+    const docRef = doc(db, 'blog-posts', id);
+    
+    const updatedData = {
+      ...postData,
+      updatedAt: serverTimestamp()
+    };
+    
+    await updateDoc(docRef, updatedData);
+  } catch (error) {
+    console.error("Error updating blog post:", error);
+    throw error;
+  }
+}
+
+export async function deleteBlogPost(id: string, coverImagePath?: string): Promise<void> {
+  try {
+    // First, delete the document from Firestore
+    const docRef = doc(db, 'blog-posts', id);
+    await deleteDoc(docRef);
+    
+    // If a cover image path is provided, delete the image too
+    if (coverImagePath) {
+      const imagePath = coverImagePath.includes('firebasestorage') 
+        ? coverImagePath.split('/o/')[1].split('?')[0].replace(/%2F/g, '/') 
+        : coverImagePath;
+        
+      await deleteImage(imagePath);
+    }
+  } catch (error) {
+    console.error("Error deleting blog post:", error);
     throw error;
   }
 }
