@@ -72,17 +72,48 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return unsubscribe;
   }, []);
 
-  // Logout function
-  const logout = async () => {
-    try {
-      await signOut(auth);
-      Cookies.remove('admin_authenticated');
-      Cookies.remove('admin_user');
-      sessionStorage.removeItem('firebaseToken');
-    } catch (error) {
-      console.error("Logout error:", error);
+// Logout function
+const logout = async () => {
+  try {
+    console.log("Starting logout process");
+    console.log("Token before logout:", !!sessionStorage.getItem('firebaseToken'));
+    
+    // Sign out from Firebase
+    await signOut(auth);
+    
+    // Clear cookies
+    Cookies.remove('admin_authenticated');
+    Cookies.remove('admin_user');
+    
+    // Clear session storage - using both ways to be safe
+    sessionStorage.removeItem('firebaseToken');
+    
+    // Verify token removal and try alternative method if needed
+    if (sessionStorage.getItem('firebaseToken')) {
+      console.warn("Token still exists after removeItem, trying direct clear");
+      sessionStorage.clear(); // More aggressive approach
     }
-  };
+    
+    // Reset state
+    setCurrentUser(null);
+    setAdminState(false);
+    
+    // Verify all cleared
+    console.log("Token after logout:", !!sessionStorage.getItem('firebaseToken'));
+    console.log("Admin cookie after logout:", !!Cookies.get('admin_authenticated'));
+    console.log("Logout completed successfully");
+  } catch (error) {
+    console.error("Error during logout:", error);
+    
+    // Still try to remove tokens even if Firebase signOut fails
+    sessionStorage.removeItem('firebaseToken');
+    sessionStorage.clear();
+    Cookies.remove('admin_authenticated');
+    Cookies.remove('admin_user');
+    
+    throw error;
+  }
+};
 
   // Context value
   const value = {

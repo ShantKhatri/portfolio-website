@@ -1,18 +1,51 @@
 "use client"
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Menu, X, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import Cookies from 'js-cookie';
 
 const Navbar: React.FC = () => {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { currentUser, isAdmin, logout, loading } = useAuth();
+  
+  // New state to handle user display name
+  const [userDisplay, setUserDisplay] = useState<string>("Admin");
+  
+  // Only update the display name on the client side after initial render
+  useEffect(() => {
+    if (currentUser?.email) {
+      setUserDisplay(currentUser.email);
+    } else if (Cookies.get('admin_user')) {
+      setUserDisplay(Cookies.get('admin_user') || "Admin");
+    }
+  }, [currentUser]);
+  
+  const handleLogout = async () => {
+    try {
+      console.log("Logout button clicked");
+      await logout();
+      
+      // Force clear everything again to be sure
+      sessionStorage.removeItem('firebaseToken');
+      sessionStorage.clear();
+      Cookies.remove('admin_authenticated');
+      Cookies.remove('admin_user');
+      
+      console.log("Logout successful, redirecting to login");
+      router.push('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+  
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  
-  const pathname = usePathname();
-  const { currentUser, isAdmin, logout } = useAuth();
+  const [mounted, setMounted] = useState(false);
   
   const isAdminRoute = pathname?.startsWith('/admin');
   const isLoginPage = pathname === '/login';
@@ -44,6 +77,10 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isAdminRoute, isLoginPage]);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const navLinks = [
     { href: '#home', text: 'Home' },
     { href: '#projects', text: 'Projects' },
@@ -56,7 +93,6 @@ const Navbar: React.FC = () => {
   const handleClick = () => {
     setIsOpen(false);
   };
-  
   // Don't render navbar on login page
   if (isLoginPage) {
     return null;
@@ -81,7 +117,7 @@ const Navbar: React.FC = () => {
                   href="/admin/blog" 
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     pathname === '/admin/blog' 
-                      ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                      ? 'text-white bg-gray-700'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
@@ -91,7 +127,7 @@ const Navbar: React.FC = () => {
                   href="/admin/messages"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     pathname === '/admin/messages' 
-                      ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                      ? 'text-white bg-gray-700'
                       : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                 >
@@ -104,35 +140,32 @@ const Navbar: React.FC = () => {
             <div className="flex items-center">
               <Link 
                 href="/"
-                className="mr-4 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700"
+                className="mr-4 px-3 py-1.5 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
               >
                 View Site
               </Link>
               
-              <div className="relative">
-                <button 
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center text-sm px-4 py-2 rounded-md bg-gray-700 hover:bg-gray-600 focus:outline-none"
-                >
-                  <span className="mr-2">{currentUser?.email || 'Admin'}</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-                
-                {isDropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 py-1 bg-gray-700 rounded-md shadow-lg z-10">
-                    <button 
-                      onClick={() => {
-                        logout();
-                        router.push('/login');
-                      }}
-                      className="flex items-center w-full px-4 py-2 text-sm text-gray-200 hover:bg-gray-600"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Logout
-                    </button>
-                  </div>
-                )}
-              </div>
+              {mounted ? (
+                <div className="relative">
+                  <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="flex items-center">
+                    <span className="mr-2">
+                      {currentUser?.email || Cookies.get('admin_user') || "Admin"}
+                    </span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  
+                  {isDropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-gray-700 rounded-md">
+                      <button onClick={handleLogout} className="flex items-center w-full px-4 py-2">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="h-9 w-24 bg-gray-700 rounded-md animate-pulse"></div>
+              )}
             </div>
           </div>
         </div>

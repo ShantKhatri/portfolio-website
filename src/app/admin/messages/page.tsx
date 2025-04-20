@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Trash2, Search, MailOpen, Mail, Loader2, 
-  CheckCircle, AlertTriangle, Filter, LogOut 
+  CheckCircle, AlertTriangle, Filter
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { orderBy, query } from 'firebase/firestore';
@@ -221,12 +221,6 @@ const AdminMessagesPage = () => {
     <div className="min-h-screen bg-gray-900 pt-16">
       {/* Add debug button at the top */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-end">
-        <button
-          onClick={testFirebaseAuth}
-          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md text-sm"
-        >
-          Debug Auth
-        </button>
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
