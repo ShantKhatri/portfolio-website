@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Mail, MapPin, Phone, Send, Github, Linkedin, ExternalLink } from 'lucide-react';
 import SectionHeading from '../ui/SectionHeading';
+import { submitContactForm } from '@/services/contactService';
 
 const ContactSection: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -29,12 +30,8 @@ const ContactSection: React.FC = () => {
     setSubmitError(false);
     
     try {
-      // Replace with actual form submission logic
-      // Example with EmailJS or similar service:
-      // await emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', e.target as HTMLFormElement, 'YOUR_USER_ID');
-      
-      // For now, simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Submit to Firebase
+      await submitContactForm(formData);
       
       setSubmitMessage('Thank you! Your message has been sent successfully.');
       setFormData({ name: '', email: '', message: '' });

@@ -1,23 +1,34 @@
 "use client"
 import Layout from '../../components/layout/Layout';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Search } from 'lucide-react';
-import { blogPosts } from '@/data/blogData';
-
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  slug: string;
-  tags: string[];
-  coverImage: string;
-}
+import { getAllBlogPosts } from '@/services/blogService';
+import type { BlogPost } from '@/types/blog';
 
 const BlogPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+
+  useEffect(() => {
+    async function fetchPosts() {
+      setIsLoading(true);
+      try {
+        const posts = await getAllBlogPosts();
+        setBlogPosts(posts);
+      } catch (error) {
+        console.error("Error fetching blog posts:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    
+    fetchPosts();
+  }, []);
 
   // Extract all unique tags from blog posts
   const allTags = Array.from(new Set(blogPosts.flatMap(post => post.tags)));
@@ -39,6 +50,16 @@ const BlogPage: React.FC = () => {
         : [...prev, tag]
     );
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

@@ -4,121 +4,16 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Clock, Calendar, Tag, Share2, Bookmark } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import ParticleBackground from '../../../components/ui/ParticleBackground';
 import Navbar from '../../../components/Navbar';
-
-// Import blog post type from your types file or define it here
-interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  coverImage: string;
-  date: string;
-  readTime: string;
-  tags: string[];
-}
-
-// Sample blog posts data (in real app, you'd fetch this)
-const blogPosts: BlogPost[] = [
-  {
-    id: '1',
-    slug: 'modern-react-best-practices',
-    title: 'Modern React Best Practices for 2025',
-    excerpt: 'Discover the latest patterns and practices for building efficient React applications.',
-    content: `
-# Modern React Best Practices for 2025
-
-React has evolved substantially since its inception, and as we move forward into 2025, several best practices have emerged that can significantly improve your development experience and application performance.
-
-## 1. Use Functional Components with Hooks
-
-Functional components with hooks have become the standard way of writing React components. They're more concise, easier to test, and generally lead to more readable code.
-
-\`\`\`jsx
-// Good practice
-function UserProfile({ user }) {
-  const [isEditing, setIsEditing] = useState(false);
-  
-  return (
-    <div>
-      <h2>{user.name}</h2>
-      {isEditing ? (
-        <EditForm user={user} />
-      ) : (
-        <button onClick={() => setIsEditing(true)}>Edit Profile</button>
-      )}
-    </div>
-  );
-}
-\`\`\`
-
-## 2. Implement Code Splitting
-
-As your application grows, bundle size becomes a concern. React.lazy and Suspense allow you to split your code into smaller chunks and load components only when needed.
-
-\`\`\`jsx
-const LazyComponent = React.lazy(() => import('./LazyComponent'));
-
-function App() {
-  return (
-    <React.Suspense fallback={<Loading />}>
-      <LazyComponent />
-    </React.Suspense>
-  );
-}
-\`\`\`
-
-## 3. Use React Server Components
-
-React Server Components are a game-changer for performance. They allow parts of your UI to be rendered on the server, reducing the bundle size and improving initial load performance.
-
-## 4. State Management Considerations
-
-While global state management libraries like Redux are still popular, consider if you really need them. React's Context API, combined with useReducer, can handle many use cases without additional dependencies.
-
-## 5. Optimize Renders with Memo and Callbacks
-
-Use React.memo, useMemo, and useCallback to prevent unnecessary re-renders, especially in component trees with frequent updates.
-
-\`\`\`jsx
-const MemoizedComponent = React.memo(function MyComponent(props) {
-  // Your component logic
-});
-
-function ParentComponent() {
-  const handleClick = useCallback(() => {
-    // Handle click logic
-  }, []);
-  
-  const computedValue = useMemo(() => {
-    return expensiveComputation(dep1, dep2);
-  }, [dep1, dep2]);
-  
-  return <MemoizedComponent onClick={handleClick} value={computedValue} />;
-}
-\`\`\`
-
-## 6. Type Everything with TypeScript
-
-TypeScript has become essential for large React applications. It catches errors at compile time and improves code maintainability.
-
-## 7. Adopt Modern Testing Practices
-
-Use React Testing Library for component testing, focusing on testing behavior rather than implementation details.
-
-## Conclusion
-
-By following these practices, you'll build more maintainable, performant React applications that are prepared for the future of web development.
-`,
-    coverImage: '/images/blog/react-best-practices.jpg',
-    date: 'April 10, 2025',
-    readTime: '6 min read',
-    tags: ['React', 'Frontend', 'Best Practices']
-  },
-  // Add other blog posts...
-];
+import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
+import type { BlogPost } from '@/types/blog';
 
 const BlogPostPage: React.FC = () => {
   const pathname = usePathname();
@@ -128,24 +23,31 @@ const BlogPostPage: React.FC = () => {
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   
   useEffect(() => {
-    // Simulate data fetching
-    setIsLoading(true);
-    
-    // Find the current post by slug
-    const currentPost = blogPosts.find(p => p.slug === slug);
-    
-    if (currentPost) {
-      setPost(currentPost);
+    const fetchPost = async () => {
+      setIsLoading(true);
       
-      // Get related posts based on tags
-      const related = blogPosts
-        .filter(p => p.id !== currentPost.id && p.tags.some(tag => currentPost.tags.includes(tag)))
-        .slice(0, 2);
-      
-      setRelatedPosts(related);
+      try {
+        if (!slug) return;
+        
+        const postData = await getBlogPostBySlug(slug);
+        
+        if (postData) {
+          setPost(postData);
+          
+          // Get related posts based on tags
+          const related = await getRelatedBlogPosts(postData.id, postData.tags, 2);
+          setRelatedPosts(related);
+        }
+      } catch (error) {
+        console.error("Error fetching blog post:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    if (slug) {
+      fetchPost();
     }
-    
-    setIsLoading(false);
   }, [slug]);
 
   if (isLoading) {
@@ -227,10 +129,56 @@ const BlogPostPage: React.FC = () => {
           </button>
         </div>
         
-        {/* Article Content */}
-        <article className="prose prose-invert prose-lg max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: markdownToHtml(post.content) }} />
-        </article>
+        {/* Article Content with ReactMarkdown */}
+        {post && (
+          <article className="prose prose-invert prose-lg max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[
+                rehypeRaw,
+                rehypeSanitize,
+                rehypeSlug,
+                [rehypeAutolinkHeadings, { behavior: 'wrap' }]
+              ]}
+              components={{
+                // Customize how different elements are rendered
+                img: ({ src, alt }) => (
+                  <div className="my-8">
+                    <Image 
+                      src={src || ''} 
+                      alt={alt || 'Blog image'} 
+                      width={800} 
+                      height={400} 
+                      className="rounded-lg mx-auto"
+                    />
+                  </div>
+                ),
+                // You can customize other elements as needed
+                a: (props) => (
+                  <a {...props} className="text-purple-400 hover:text-purple-300 transition-colors" />
+                ),
+                code: ({ className, children, ...props }) => {
+                  const isInline = !className?.includes('language-');
+                  return isInline ? (
+                    <code className="bg-gray-800 px-1 py-0.5 rounded text-sm" {...props}>{children}</code>
+                  ) : (
+                    <code className="block bg-gray-900 p-4 rounded-md overflow-x-auto my-6" {...props}>{children}</code>
+                  );
+                },
+                pre: (props) => (
+                  <pre className="bg-transparent p-0" {...props} />
+                ),
+                table: (props) => (
+                  <div className="overflow-x-auto my-8">
+                    <table className="min-w-full" {...props} />
+                  </div>
+                ),
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
+          </article>
+        )}
 
         {/* Tags - Mobile View */}
         <div className="mt-12 flex flex-wrap gap-2 lg:hidden">
@@ -300,24 +248,5 @@ const BlogPostPage: React.FC = () => {
     </div>
   );
 };
-
-// Simple markdown to HTML converter (In a real app, use a proper markdown library)
-function markdownToHtml(markdown: string): string {
-  // This is extremely simplified - use a proper markdown library in production
-  let html = markdown;
-  
-  // Convert headers
-  html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-  html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-  html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-  
-  // Convert paragraphs
-  html = html.replace(/^(?!<h|```)(.*$)/gm, '<p>$1</p>');
-  
-  // Convert code blocks
-  html = html.replace(/```(.*?)```/g, '<pre><code>$1</code></pre>');
-  
-  return html;
-}
 
 export default BlogPostPage;
