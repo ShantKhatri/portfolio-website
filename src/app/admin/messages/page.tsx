@@ -21,7 +21,7 @@ interface ContactMessage {
   name: string;
   email: string;
   message: string;
-  createdAt: import('firebase/firestore').Timestamp;
+  createdAt: Timestamp;
   read: boolean;
 }
 
@@ -34,7 +34,7 @@ const AdminMessagesPage = () => {
   const { isAdmin, loading: authLoading, logout } = useAuth();
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Initial loading state
   const [searchQuery, setSearchQuery] = useState('');
   const [filterByRead, setFilterByRead] = useState<'all' | 'read' | 'unread'>('all');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
@@ -107,9 +107,6 @@ const AdminMessagesPage = () => {
       return () => clearTimeout(timer);
     }
   }, [actionResult]);
-    setIsLoading(true);
-    setError(null);
-  
   
   // Mark message as read/unread
   const handleToggleRead = async (id: string, currentReadStatus: boolean) => {

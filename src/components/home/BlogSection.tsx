@@ -5,6 +5,29 @@ import SectionHeading from '../ui/SectionHeading';
 
 // Create some sample blog posts if you don't have a data file
 
+const blogPosts = [
+  {
+    id: '1',
+    title: 'Understanding React Hooks',
+    slug: 'understanding-react-hooks',
+    excerpt: 'A deep dive into the world of React Hooks and how to use them effectively.',
+    date: '2023-10-01',
+    readTime: '5 min read',
+    tags: ['React', 'JavaScript'],
+    coverImage: '/images/blog/react-hooks.jpg'
+  },
+  {
+    id: '2',
+    title: 'CSS Grid vs Flexbox',
+    slug: 'css-grid-vs-flexbox',
+    excerpt: 'Comparing CSS Grid and Flexbox for layout design in web development.',
+    date: '2023-09-15',
+    readTime: '4 min read',
+    tags: ['CSS', 'Web Design'],
+    coverImage: '/images/blog/css-grid-vs-flexbox.jpg'
+  },
+  // Add more posts as needed
+];
 
 const BlogSection: React.FC = () => {
   return (

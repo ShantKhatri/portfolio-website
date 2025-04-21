@@ -1,6 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -10,14 +10,10 @@ import { uploadBlogImage } from '@/services/storageService';
 import AdminHeader from '@/components/admin/AdminHeader';
 import MarkdownEditor from '@/components/admin/MarkdownEditor';
 
-export default function EditBlogPost({
-  params,
-}: {
-  params: { id: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
+export default function EditBlogPost() {
   const router = useRouter();
-  const { id } = params;
+  const params = useParams();
+  const id = params.id as string;
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewTab, setPreviewTab] = useState<'edit' | 'preview'>('edit');
@@ -191,7 +187,6 @@ export default function EditBlogPost({
         ...formData,
         coverImage: updatedImagePath,
         tags: tags,
-        updatedAt: new Date().toISOString(),
       };
       
       // Update blog post in database
