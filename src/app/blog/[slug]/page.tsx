@@ -1,24 +1,22 @@
 "use client"
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { 
-  ArrowLeft, Clock, Calendar, Tag, 
-  // Share2,
+  ArrowLeft, Clock, Calendar, Tag,
   Bookmark, 
   ThumbsUp, MessageSquare, Copy, 
-  // ChevronUp,
    Facebook, Twitter, Linkedin, 
-  //  CheckCheck
+   CheckCheck
 } from 'lucide-react';
 import { format } from 'date-fns';
-// import ReactMarkdown from 'react-markdown';
-// import remarkGfm from 'remark-gfm';
-// import rehypeRaw from 'rehype-raw';
-// import rehypeSanitize from 'rehype-sanitize';
-// import rehypeSlug from 'rehype-slug';
-// import rehypeAutolinkHeadings from 'rehype-autolink-headings';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import ParticleBackground from '../../../components/ui/ParticleBackground';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
@@ -41,21 +39,63 @@ interface Reply {
   createdAt: Date | { toDate(): Date } | string | number;
 }
 
-// const processMarkdown = (content: string) => {
-//   if (!content) return '';
+const CodeBlock = ({ className, children, ...props }: { className?: string; children?: React.ReactNode } & React.HTMLAttributes<HTMLElement>) => {
+  const match = /language-(\w+)/.exec(className || '');
+  const language = match ? match[1] : '';
+  const isInline = !match;
+  const codeRef = useRef<HTMLElement>(null);
+  const [isCopied, setIsCopied] = useState(false);
   
-//   // Fix common markdown formatting issues
-//   return content
-//     // Replace escaped newlines with actual newlines
-//     .replace(/\\n/g, "\n")
-//     // Ensure headers have spaces after #
-//     .replace(/^(#{1,6})([^#\s])/gm, '$1 $2')
-//     // Ensure proper spacing around lists
-//     .replace(/^(-|\d+\.)\s*([^\n])/gm, '$1 $2')
-//     // Fix table formatting if needed
-//     .replace(/\|(\S)/g, '| $1')
-//     .replace(/(\S)\|/g, '$1 |');
-// };
+  const handleCopyCode = () => {
+    if (codeRef.current) {
+      navigator.clipboard.writeText(codeRef.current.textContent || '');
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    }
+  };
+  
+  return isInline ? (
+    <code {...props} className="bg-gray-800 px-1 py-0.5 rounded text-sm font-mono text-gray-300">
+      {children}
+    </code>
+  ) : (
+    <div {...props} className="overflow-hidden rounded-md bg-gray-900 my-6 relative group">
+      <div className="flex justify-between items-center bg-gray-800 px-4 py-2 text-sm text-gray-400 border-b border-gray-700">
+        <span>{language}</span>
+        <button 
+          onClick={handleCopyCode}
+          className="text-gray-400 hover:text-white transition-colors focus:outline-none"
+          aria-label="Copy code"
+        >
+          {isCopied ? (
+            <CheckCheck className="w-4 h-4" />
+          ) : (
+            <Copy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+      <pre className="overflow-x-auto p-4 text-sm">
+        <code ref={codeRef} className={`language-${language}`}>{children}</code>
+      </pre>
+    </div>
+  );
+};
+
+const processMarkdown = (content: string) => {
+  if (!content) return '';
+  
+  // Fix common markdown formatting issues
+  return content
+    // Replace escaped newlines with actual newlines
+    .replace(/\\n/g, "\n")
+    // Ensure headers have spaces after #
+    .replace(/^(#{1,6})([^#\s])/gm, '$1 $2')
+    // Ensure proper spacing around lists
+    .replace(/^(-|\d+\.)\s*([^\n])/gm, '$1 $2')
+    // Fix table formatting if needed
+    .replace(/\|(\S)/g, '| $1')
+    .replace(/(\S)\|/g, '$1 |');
+};
 
 const BlogPostPage: React.FC = () => {
   const pathname = usePathname();
@@ -448,7 +488,7 @@ const BlogPostPage: React.FC = () => {
           </button>
         </div>
         
-        {/*// Article Content with ReactMarkdown
+        {/* Article Content with ReactMarkdown */}
         {post && (
           <article className="prose prose-invert prose-lg max-w-none">
             <ReactMarkdown
@@ -484,47 +524,7 @@ const BlogPostPage: React.FC = () => {
                 a: (props) => (
                   <a {...props} className="text-purple-400 hover:text-purple-300 transition-colors" />
                 ),
-                code: ({className, children, ...props}) => {
-                  const match = /language-(\w+)/.exec(className || '');
-                  const language = match ? match[1] : '';
-                  const isInline = !match;
-                  const codeRef = useRef<HTMLPreElement>(null);
-                  const [isCopied, setIsCopied] = useState(false);
-                  
-                  const handleCopyCode = () => {
-                    if (codeRef.current) {
-                      navigator.clipboard.writeText(codeRef.current.textContent || '');
-                      setIsCopied(true);
-                      setTimeout(() => setIsCopied(false), 2000);
-                    }
-                  };
-                  
-                  return isInline ? (
-                    <code className="bg-gray-800 px-1 py-0.5 rounded text-sm font-mono text-gray-300" {...props}>
-                      {children}
-                    </code>
-                  ) : (
-                    <div className="overflow-hidden rounded-md bg-gray-900 my-6 relative group">
-                      <div className="flex justify-between items-center bg-gray-800 px-4 py-2 text-sm text-gray-400 border-b border-gray-700">
-                        <span>{language}</span>
-                        <button 
-                          onClick={handleCopyCode}
-                          className="text-gray-400 hover:text-white transition-colors focus:outline-none"
-                          aria-label="Copy code"
-                        >
-                          {isCopied ? (
-                            <CheckCheck className="w-4 h-4" />
-                          ) : (
-                            <Copy className="w-4 h-4" />
-                          )}
-                        </button>
-                      </div>
-                      <pre className="overflow-x-auto p-4 text-sm">
-                        <code ref={codeRef} className={`language-${language}`}>{children}</code>
-                      </pre>
-                    </div>
-                  );
-                },
+                code: CodeBlock,
                 pre: ({...props}) => <pre className="bg-transparent p-0" {...props} />,
                 table: (props) => (
                   <div className="overflow-x-auto my-8">
@@ -545,7 +545,7 @@ const BlogPostPage: React.FC = () => {
               {processMarkdown(post.content)}
             </ReactMarkdown>
           </article>
-        )} */}
+        )}
 
         {/* Tags - Mobile View */}
         <div className="mt-12 flex flex-wrap gap-2 lg:hidden">

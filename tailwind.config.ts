@@ -30,7 +30,7 @@ export default {
           '50%': { opacity: '0' },
         },
       },
-      typography: (theme: any) => ({
+      typography: (theme: (path: string) => string) => ({
         DEFAULT: {
           css: {
             color: theme('colors.gray.300'),
