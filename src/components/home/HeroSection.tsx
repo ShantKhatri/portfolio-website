@@ -23,7 +23,6 @@ const HeroSection: React.FC = () => {
   return (
     <section id="home" className="min-h-screen flex items-center justify-center relative pt-16">
       <div className="text-center z-10 px-4">
-        <p className="text-purple-500 mb-4 font-medium">WELCOME TO MY PORTFOLIO</p>
         <h1 className="text-5xl md:text-7xl font-bold mb-6">
           I&apos;m <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">Prashantkumar Khatri</span>
         </h1>
@@ -38,13 +37,13 @@ const HeroSection: React.FC = () => {
         </p>
         <div className="flex space-x-4 justify-center mb-10">
           <Link 
-            href="#projects" 
+            href="/#projects" 
             className="px-8 py-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 transform hover:scale-105 transition-all"
           >
             View Projects
           </Link>
           <Link 
-            href="#contact" 
+            href="/#contact" 
             className="px-8 py-3 rounded-full border-2 border-purple-500 hover:bg-purple-500/20 transform hover:scale-105 transition-all"
           >
             Contact Me

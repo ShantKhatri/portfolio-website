@@ -82,18 +82,57 @@ const Navbar: React.FC = () => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (pathname === '/') {
+      const params = new URLSearchParams(window.location.search);
+      const section = params.get('section');
+      
+      if (section) {
+        const timer = setTimeout(() => {
+          const element = document.getElementById(section);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+            
+            window.history.replaceState({}, document.title, '/');
+          }
+        }, 100);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [pathname]);
+
   const navLinks = [
-    { href: '#home', text: 'Home' },
-    { href: '#projects', text: 'Projects' },
-    { href: '#skills', text: 'Skills' },
-    { href: '#experience', text: 'Experience' },
-    { href: '#education', text: 'Education' },
-    { href: '#achievements', text: 'Achievements' },
+    { href: '/#home', text: 'Home' },
+    { href: '/#projects', text: 'Projects' },
+    { href: '/#skills', text: 'Skills' },
+    { href: '/blog', text: 'Blog' },
+    { href: '/#experience', text: 'Experience' },
+    { href: '/#education', text: 'Education' },
   ];
   
   const handleClick = () => {
     setIsOpen(false);
   };
+  
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    
+    setIsOpen(false);
+    
+    if (href.includes('/#')) {
+      const sectionId = href.split('#')[1];
+      
+      if (pathname === '/' || pathname === '') {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        router.push(`/?section=${sectionId}`);
+      }
+    } else {
+      router.push(href);
+    }
+  };
+
   // Don't render navbar on login page
   if (isLoginPage) {
     return null;
@@ -177,155 +216,132 @@ const Navbar: React.FC = () => {
   // Default: render public navbar
   return (
     <nav 
-    className={`fixed top-0 w-full z-50 transition-all duration-300 bg-black/60 backdrop-blur-sm ${
-      scrolled ? 'shadow-lg bg-black/80 backdrop-blur-lg' : ''
+    className={`fixed top-0 w-full z-50 transition-all duration-300 bg-black/75 backdrop-blur-md ${
+      scrolled ? 'shadow-lg bg-black/85 backdrop-blur-lg py-1' : 'py-2'
     }`}
   >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <Link href="/" className="font-bold text-xl">
-              <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
-                PK
-              </span>
-            </Link>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              {navLinks.map(link => (
-                <Link 
-                  key={link.text}
-                  href={link.href}
-                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeSection === link.href.substring(1)
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center justify-between h-14">
+        {/* Logo */}
+        <div className="flex-shrink-0">
+          <Link href="/" className="font-bold text-xl">
+            <span className="bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              PK
+            </span>
+          </Link>
+        </div>
+        
+        {/* Desktop Navigation */}
+        <div className="hidden md:block">
+          <div className="flex items-center space-x-1">
+            {navLinks.map(link => (
+              <Link 
+                key={link.text}
+                href={link.href}
+                className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  // Check if we're on a blog page first
+                  (link.href === '/blog' && pathname?.startsWith('/blog'))
+                    ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                    // Only use activeSection for non-blog pages
+                    : (!pathname?.startsWith('/blog') && activeSection === link.href.replace('/#', ''))
                       ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
                       : 'text-gray-300 hover:bg-gray-800/40 hover:text-white'
-                  }`}
-                  onClick={handleClick}
-                >
-                  {link.text}
-                </Link>
-              ))}
-              <Link 
-                href="#contact" 
-                className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
-                  bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
-                  transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg
-                  shadow-sm shadow-purple-500/20 border border-purple-500/30 flex items-center justify-center"
+                }`}
+                onClick={(e) => handleNavClick(e, link.href)}
               >
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  className="h-4 w-4 mr-1" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-                  />
-                </svg>
-                Contact
+                {link.text}
               </Link>
-              
-              {/* Admin link - only visible when authenticated */}
-              {isAdmin && (
-                <Link 
-                  href="/admin/blog" 
-                  className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
-                    bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500
-                    transition-all duration-300"
-                >
-                  Admin
-                </Link>
-              )}
-            </div>
-          </div>
-          
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="bg-gray-800/60 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none"
-              aria-expanded="false"
+            ))}
+            <Link 
+              href="/#contact" 
+              className="ml-3 px-4 py-1.5 rounded-md text-sm font-medium text-white
+                bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
+                transition-all duration-200 shadow-sm shadow-purple-500/20"
+              onClick={(e) => handleNavClick(e, '/#contact')}
             >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? (
-                <X className="block h-6 w-6" />
-              ) : (
-                <Menu className="block h-6 w-6" />
-              )}
-            </button>
+              Contact
+            </Link>
+            
+            {/* Admin link - only visible when authenticated */}
+            {isAdmin && (
+              <Link 
+                href="/admin/blog" 
+                className="ml-2 px-3 py-1.5 rounded-md text-sm font-medium text-white
+                  bg-gray-800 hover:bg-gray-700 transition-all duration-200"
+              >
+                Admin
+              </Link>
+            )}
           </div>
         </div>
+        
+        {/* Mobile menu button - Cleaner version */}
+        <div className="md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="bg-gray-800/60 inline-flex items-center justify-center p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-gray-700/80 focus:outline-none"
+            aria-expanded="false"
+          >
+            <span className="sr-only">Open main menu</span>
+            {isOpen ? (
+              <X className="block h-5 w-5" />
+            ) : (
+              <Menu className="block h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
+    </div>
 
-      {/* Mobile Navigation */}
-      <div
-        className={`md:hidden transition-all duration-300 ease-in-out transform ${
-          isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
-        } overflow-hidden`}
-      >
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-black/90 backdrop-blur-lg">
-          {navLinks.map(link => (
-            <Link
-              key={link.text}
-              href={link.href}
-              className={`block px-3 py-2 rounded-md text-base font-medium ${
-                activeSection === link.href.substring(1)
-                  ? 'bg-gradient-to-r from-purple-500/40 to-blue-500/40 text-white'
+    {/* Mobile Navigation - Improved version */}
+    <div
+      className={`md:hidden transition-all duration-300 ease-in-out transform ${
+        isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+      } overflow-hidden`}
+    >
+      <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gray-900/95 backdrop-blur-lg border-t border-gray-800">
+        {navLinks.map(link => (
+          <Link
+            key={link.text}
+            href={link.href}
+            className={`block px-3 py-2 rounded-md text-base font-medium ${
+              // Check if we're on a blog page first
+              (link.href === '/blog' && pathname?.startsWith('/blog'))
+                ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
+                // Only use activeSection for non-blog pages
+                : (!pathname?.startsWith('/blog') && activeSection === link.href.replace('/#', ''))
+                  ? 'text-white bg-gradient-to-r from-purple-500/40 to-blue-500/40'
                   : 'text-gray-300 hover:bg-gray-800/60 hover:text-white'
-              }`}
-              onClick={handleClick}
-            >
-              {link.text}
-            </Link>
-          ))}
+            }`}
+            onClick={(e) => handleNavClick(e, link.href)}
+          >
+            {link.text}
+          </Link>
+        ))}
+        <Link 
+          href="/#contact" 
+          className="block mt-3 mx-1 px-4 py-2 rounded-md text-base font-medium text-white
+            bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
+            transition-all duration-200"
+          onClick={(e) => handleNavClick(e, '/#contact')}
+        >
+          Contact Me
+        </Link>
+        
+        {/* Admin link in mobile menu */}
+        {isAdmin && (
           <Link 
-            href="#contact" 
-            className="block mt-3 mx-1 px-4 py-2.5 rounded-lg text-base font-medium text-white
-              bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600
-              transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg
-              shadow-md shadow-purple-500/20 border border-purple-500/30 flex items-center justify-center"
+            href="/admin/blog" 
+            className="block mt-2 mx-1 px-4 py-2 rounded-md text-base font-medium text-white
+              bg-gray-800 hover:bg-gray-700 transition-all duration-200"
             onClick={handleClick}
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-5 w-5 mr-1.5" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" 
-              />
-            </svg>
-            Contact Me
+            Admin Dashboard
           </Link>
-          
-          {/* Admin link in mobile menu - only visible when authenticated */}
-          {isAdmin && (
-            <Link 
-              href="/admin/blog" 
-              className="block mt-3 mx-1 px-4 py-2.5 rounded-lg text-base font-medium text-white
-                bg-gradient-to-r from-gray-700 to-gray-600
-                transition-all duration-300 ease-in-out"
-              onClick={handleClick}
-            >
-              Admin Dashboard
-            </Link>
-          )}
-        </div>
+        )}
       </div>
-    </nav>
+    </div>
+  </nav>
   );
 };
 
