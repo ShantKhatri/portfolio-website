@@ -117,17 +117,54 @@ const BlogPage: React.FC = () => {
             filteredPosts.map((post: BlogPost) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
                 <div className="bg-gray-900/50 rounded-xl overflow-hidden group hover:bg-gray-800/70 transition-all duration-300 h-full flex flex-col">
+                  {/* Image Container */}
                   <div className="relative h-48 w-full">
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
                     <Image 
                       src={post.coverImage} 
                       alt={post.title} 
                       fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       style={{ objectFit: 'cover' }}
                       className="group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
-                  {/* Post content... */}
+                  
+                  {/* Content Container */}
+                  <div className="p-6 flex flex-col flex-grow">
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {post.tags.slice(0, 2).map((tag) => (
+                        <span 
+                          key={tag} 
+                          className="text-xs px-2 py-1 bg-purple-500/20 text-purple-300 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      {post.tags.length > 2 && (
+                        <span className="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded-full">
+                          +{post.tags.length - 2}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Title */}
+                    <h3 className="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    
+                    {/* Excerpt */}
+                    <p className="text-gray-400 mb-4 flex-grow line-clamp-3">
+                      {post.excerpt}
+                    </p>
+                    
+                    {/* Date & Read Time */}
+                    <div className="flex justify-between items-center text-sm text-gray-500 mt-auto">
+                      <span>{post.date}</span>
+                      <span>{post.readTime}</span>
+                    </div>
+                  </div>
                 </div>
               </Link>
             ))
