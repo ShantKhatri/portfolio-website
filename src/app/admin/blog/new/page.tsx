@@ -142,8 +142,8 @@ const BlogUploadForm = () => {
       setTimeout(() => {
         router.push('/admin/blog');
       }, 2000);
-    } catch (error: any) {
-      setError(error.message || 'An error occurred while uploading the blog post.');
+    } catch (error: Error | unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred while uploading the blog post.');
     } finally {
       setIsSubmitting(false);
     }

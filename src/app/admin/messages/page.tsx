@@ -1,12 +1,12 @@
 "use client"
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Trash2, Search, MailOpen, Mail, Loader2, 
   CheckCircle, AlertTriangle, Filter
 } from 'lucide-react';
 import { format } from 'date-fns';
-import { orderBy, query } from 'firebase/firestore';
+import { orderBy, query, Timestamp } from 'firebase/firestore';
 import { useAuth } from '@/contexts/AuthContext';
 import { 
   getDocumentsWithAuth, 
@@ -21,8 +21,12 @@ interface ContactMessage {
   name: string;
   email: string;
   message: string;
-  createdAt: any;
+  createdAt: import('firebase/firestore').Timestamp;
   read: boolean;
+}
+
+interface FirebaseError extends Error {
+  code?: string;
 }
 
 const AdminMessagesPage = () => {
@@ -36,7 +40,37 @@ const AdminMessagesPage = () => {
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [actionResult, setActionResult] = useState<{ success: boolean; message: string } | null>(null);
-  const [error, setError] = useState<any>(null);
+  const [error, setError] = useState<FirebaseError | null>(null);
+
+  // Memoize fetchMessages function
+  const fetchMessages = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const fetchedMessages = await getDocumentsWithAuth<ContactMessage>(
+        'contact-messages',
+        (q) => query(q, orderBy('createdAt', 'desc'))
+      );
+      
+      setMessages(fetchedMessages);
+    } catch (error: unknown) {
+      console.error("Error fetching messages:", error);
+      const firebaseError = error as FirebaseError;
+      setError(firebaseError);
+      setActionResult({ 
+        success: false, 
+        message: `Failed to load messages: ${firebaseError.message || 'Unknown error'}` 
+      });
+      
+      // If permission denied, attempt to logout and redirect
+      if (firebaseError.code === 'permission-denied') {
+        logout();
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [logout]);
 
   // Check authentication on component mount
   useEffect(() => { 
@@ -47,7 +81,7 @@ const AdminMessagesPage = () => {
         fetchMessages();
       }
     }
-  }, [authLoading, isAdmin, router]);
+  }, [authLoading, isAdmin, router, fetchMessages]);
 
   useEffect(() => {
     const refreshAuthToken = async () => {
@@ -55,7 +89,7 @@ const AdminMessagesPage = () => {
         try {
           const token = await auth.currentUser.getIdToken(true);
           sessionStorage.setItem('firebaseToken', token);
-        } catch (err) {
+        } catch {
         }
       }
     };
@@ -73,34 +107,9 @@ const AdminMessagesPage = () => {
       return () => clearTimeout(timer);
     }
   }, [actionResult]);
-  
-  async function fetchMessages() {
     setIsLoading(true);
     setError(null);
-    
-    try {
-      const fetchedMessages = await getDocumentsWithAuth<ContactMessage>(
-        'contact-messages',
-        (q) => query(q, orderBy('createdAt', 'desc'))
-      );
-      
-      setMessages(fetchedMessages);
-    } catch (error: any) {
-      console.error("Error fetching messages:", error);
-      setError(error);
-      setActionResult({ 
-        success: false, 
-        message: `Failed to load messages: ${error.message}` 
-      });
-      
-      // If permission denied, attempt to logout and redirect
-      if (error.code === 'permission-denied') {
-        logout();
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  
   
   // Mark message as read/unread
   const handleToggleRead = async (id: string, currentReadStatus: boolean) => {
@@ -126,14 +135,15 @@ const AdminMessagesPage = () => {
         success: true, 
         message: `Message marked as ${!currentReadStatus ? 'read' : 'unread'}` 
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error toggling read status:", error);
+      const firebaseError = error as FirebaseError;
       setActionResult({ 
         success: false, 
-        message: `Failed to update message status: ${error.message}` 
+        message: `Failed to update message status: ${firebaseError.message}` 
       });
       
-      if (error.code === 'permission-denied') {
+      if (firebaseError.code === 'permission-denied') {
         logout();
       }
     }
@@ -157,14 +167,15 @@ const AdminMessagesPage = () => {
         success: true, 
         message: "Message deleted successfully" 
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error deleting message:", error);
+      const firebaseError = error as FirebaseError;
       setActionResult({ 
         success: false, 
-        message: `Failed to delete message: ${error.message}` 
+        message: `Failed to delete message: ${firebaseError.message}` 
       });
       
-      if (error.code === 'permission-denied') {
+      if (firebaseError.code === 'permission-denied') {
         logout();
       }
     } finally {
@@ -184,11 +195,14 @@ const AdminMessagesPage = () => {
   };
   
   // Format timestamp to readable date
-  const formatDate = (timestamp: any) => {
+  const formatDate = (timestamp: Timestamp | Date | string | number | null | undefined) => {
     if (!timestamp) return 'N/A';
     
     // Handle Firestore timestamp
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    const date = timestamp && typeof timestamp === 'object' && 'toDate' in timestamp 
+      ? timestamp.toDate() 
+      : new Date(timestamp);
+    
     return format(date, 'MMM dd, yyyy • h:mm a');
   };
 

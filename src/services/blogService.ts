@@ -9,7 +9,8 @@ import {
   query, 
   orderBy, 
   where, 
-  serverTimestamp
+  serverTimestamp,
+  limit
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { deleteImage } from './storageService';
@@ -153,7 +154,7 @@ export async function getBlogPostById(id: string): Promise<BlogPost | null> {
 }
 
 // Update an existing blog post
-export async function updateBlogPost(id: string, postData: any): Promise<void> {
+export async function updateBlogPost(id: string, postData: Partial<Omit<BlogPost, 'id'>>): Promise<void> {
   try {
     const docRef = doc(db, 'blog-posts', id);
     

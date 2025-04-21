@@ -9,9 +9,13 @@ import { getBlogPostById, updateBlogPost } from '@/services/blogService';
 import { uploadBlogImage } from '@/services/storageService';
 import AdminHeader from '@/components/admin/AdminHeader';
 import MarkdownEditor from '@/components/admin/MarkdownEditor';
-import type { BlogPost } from '@/types/blog';
 
-export default function EditBlogPost({ params }: { params: { id: string } }) {
+export default function EditBlogPost({
+  params,
+}: {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const router = useRouter();
   const { id } = params;
   const [isLoading, setIsLoading] = useState(true);
@@ -199,8 +203,8 @@ export default function EditBlogPost({ params }: { params: { id: string } }) {
       setTimeout(() => {
         router.push('/admin/blog');
       }, 2000);
-    } catch (error: any) {
-      setError(error.message || 'An error occurred while updating the blog post.');
+    } catch (error: Error | unknown) {
+      setError(error instanceof Error ? error.message : 'An error occurred while updating the blog post.');
     } finally {
       setIsSubmitting(false);
     }

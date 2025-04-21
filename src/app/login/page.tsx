@@ -8,16 +8,17 @@ import { auth } from '@/lib/firebase';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 
-// For static login until you implement proper user management
-const ADMIN_EMAIL = "admin@example.com";
-const ADMIN_PASSWORD = "portfolio2025";
+// Define Firebase error type with code property
+interface FirebaseError extends Error {
+  code?: string;
+}
 
 const LoginPage = () => {
   const router = useRouter();
   const { currentUser, isAdmin } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<FirebaseError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   // Redirect if already authenticated
@@ -25,11 +26,11 @@ const LoginPage = () => {
     if (isAdmin) {
       router.push('/admin/blog');
     }
-  }, [isAdmin, router]);
+  }, [isAdmin, router, currentUser]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError(null);
     setIsLoading(true);
 
     try {
@@ -46,27 +47,19 @@ const LoginPage = () => {
         console.log("Login successful - redirecting");
         router.push('/admin/blog');
         return;
-      } catch (firebaseError: any) {
-        console.log("Firebase auth failed, trying fallback", firebaseError);
+      } catch (error: unknown) {
+        console.log("Firebase auth failed, trying fallback", error);
+        const firebaseError = error as FirebaseError;
         if (firebaseError.code === 'auth/user-not-found' || 
             firebaseError.code === 'auth/wrong-password') {
         } else {
-          setError(`Firebase auth error: ${firebaseError.message}`);
+          setError(firebaseError);
           setIsLoading(false);
           return;
         }
       }
 
-      // Fallback to static credentials
-      if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-        Cookies.set('admin_authenticated', 'true', { expires: 1 });
-        Cookies.set('admin_user', 'admin', { expires: 1 });
-        router.push('/admin/blog');
-      } else {
-        setError('Invalid email or password');
-      }
     } catch (err) {
-      setError('Something went wrong. Please try again.');
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -87,7 +80,7 @@ const LoginPage = () => {
         <div className="bg-gray-800 rounded-xl p-8 shadow-xl border border-gray-700">
           {error && (
             <div className="bg-red-900/20 border border-red-800 text-red-200 px-4 py-3 rounded-lg mb-6">
-              {error}
+              {error.code}
             </div>
           )}
           

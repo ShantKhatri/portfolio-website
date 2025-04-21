@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const { currentUser, isAdmin, logout, loading } = useAuth();
+  const { currentUser, isAdmin, logout } = useAuth();
   
   // New state to handle user display name
   const [userDisplay, setUserDisplay] = useState<string>("Admin");
@@ -20,10 +20,11 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     if (currentUser?.email) {
       setUserDisplay(currentUser.email);
+      console.log("User display set to:", userDisplay);
     } else if (Cookies.get('admin_user')) {
       setUserDisplay(Cookies.get('admin_user') || "Admin");
     }
-  }, [currentUser]);
+  }, [currentUser, userDisplay]);
   
   const handleLogout = async () => {
     try {

@@ -2,6 +2,7 @@
 import { useState, useRef } from 'react';
 import { Upload, Loader2, X } from 'lucide-react';
 import { uploadImageFromDataUrl } from '@/services/storageService';
+import Image from 'next/image';
 
 interface ImageUploaderProps {
   onImageUploaded: (imageUrl: string) => void;
@@ -54,8 +55,9 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUploaded, onCancel
       
       // Pass the image URL to parent component
       onImageUploaded(imageUrl);
-    } catch (error: any) {
-      setError(error.message || "Failed to upload image");
+    } catch (error: Error | unknown) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to upload image";
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -90,7 +92,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUploaded, onCancel
       ) : (
         <div>
           <div className="relative max-h-64 overflow-hidden rounded-md mb-3">
-            <img 
+            <Image
               src={preview} 
               alt="Preview" 
               className="max-w-full h-auto"

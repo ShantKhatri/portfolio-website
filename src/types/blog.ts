@@ -9,6 +9,6 @@ export interface BlogPost {
   readTime: string;
   tags: string[];
   featured: boolean;
-  createdAt?: any;
-  updatedAt?: any;
+  createdAt?: import('firebase/firestore').Timestamp;
+  updatedAt?: import('firebase/firestore').Timestamp;
 }

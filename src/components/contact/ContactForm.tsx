@@ -3,8 +3,10 @@ import { useState } from 'react';
 import { Send } from 'lucide-react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+interface FirebaseError extends Error {
+  code?: string;
+}
 
-// Note: This doesn't need authentication since we're allowing public create operations
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -14,7 +16,7 @@ const ContactForm = () => {
   
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState<FirebaseError | null>(null);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -28,7 +30,7 @@ const ContactForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus('idle');
-    setErrorMessage('');
+    setErrorMessage(null);
     
     try {
       // Direct submission without auth - security rules allow this
@@ -45,11 +47,11 @@ const ContactForm = () => {
         message: '',
       });
       
-      setSubmitStatus('success');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Contact form submission error:", error);
+      const firebaseError = error as FirebaseError;
       setSubmitStatus('error');
-      setErrorMessage(error.message || 'Something went wrong. Please try again later.');
+      setErrorMessage(firebaseError);
     } finally {
       setIsSubmitting(false);
     }
@@ -125,7 +127,7 @@ const ContactForm = () => {
       
       {submitStatus === 'error' && (
         <div className="p-4 bg-red-500/20 text-red-300 border border-red-800 rounded-lg animate-fadeIn">
-          {errorMessage || 'An error occurred. Please try again.'}
+          {errorMessage?.code || 'An error occurred. Please try again.'}
         </div>
       )}
     </form>
