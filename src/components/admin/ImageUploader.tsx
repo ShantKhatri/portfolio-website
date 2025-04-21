@@ -50,12 +50,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUploaded, onCancel
       setIsUploading(true);
       setError(null);
       
-      // Upload image to Firebase Storage
+      // Upload image to Vercel Blob
       const imageUrl = await uploadImageFromDataUrl(preview);
       
       // Pass the image URL to parent component
       onImageUploaded(imageUrl);
-    } catch (error: Error | unknown) {
+    } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Failed to upload image";
       setError(errorMessage);
     } finally {

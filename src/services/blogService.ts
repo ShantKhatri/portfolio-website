@@ -170,19 +170,15 @@ export async function updateBlogPost(id: string, postData: Partial<Omit<BlogPost
   }
 }
 
-export async function deleteBlogPost(id: string, coverImagePath?: string): Promise<void> {
+export async function deleteBlogPost(id: string, coverImageUrl?: string): Promise<void> {
   try {
     // First, delete the document from Firestore
     const docRef = doc(db, 'blog-posts', id);
     await deleteDoc(docRef);
     
-    // If a cover image path is provided, delete the image too
-    if (coverImagePath) {
-      const imagePath = coverImagePath.includes('firebasestorage') 
-        ? coverImagePath.split('/o/')[1].split('?')[0].replace(/%2F/g, '/') 
-        : coverImagePath;
-        
-      await deleteImage(imagePath);
+    // If a cover image URL is provided, delete the image too
+    if (coverImageUrl) {
+      await deleteImage(coverImageUrl);
     }
   } catch (error) {
     console.error("Error deleting blog post:", error);

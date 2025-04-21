@@ -11,7 +11,6 @@ import rehypeSanitize from 'rehype-sanitize';
 import rehypeSlug from 'rehype-slug';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import ParticleBackground from '../../../components/ui/ParticleBackground';
-import Navbar from '../../../components/Navbar';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
 
@@ -89,10 +88,7 @@ const BlogPostPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Add Navbar */}
-      <Navbar />
-      
+    <div className="min-h-screen bg-black text-white">  
       {/* Add Particle Background */}
       <ParticleBackground />
       
