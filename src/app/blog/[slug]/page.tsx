@@ -21,7 +21,13 @@ import ParticleBackground from '../../../components/ui/ParticleBackground';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
 import { addComment, getCommentsForPost, CommentData } from '@/services/commentService';
-import { likePost, unlikePost, hasUserLikedPost, getPostLikeCount } from '@/services/likeService';
+import { 
+  hasUserLikedPost, 
+  likePost, 
+  unlikePost, 
+  ensureLikeCounterExists,
+  subscribeToLikeCount 
+} from '@/services/likeService';
 
 // Add type definitions for comments
 interface Comment {
@@ -343,20 +349,31 @@ const BlogPostPage: React.FC = () => {
   useEffect(() => {
     if (!post?.id) return;
     
-    const checkLikeStatus = async () => {
-      try {
-        const userHasLiked = await hasUserLikedPost(post.id);
-        setLiked(userHasLiked);
-
-        const count = await getPostLikeCount(post.id);
-        setLikeCount(count);
-      } catch (error) {
-        console.error("Error checking like status:", error);
-      }
-    };
+    if (post.slug) {
+      ensureLikeCounterExists(post.id, post.slug)
+        .catch(err => console.error("Error ensuring like counter exists:", err));
+    }
     
-    checkLikeStatus();
-  }, [post?.id]);
+    // Check if this user has liked the post (this is local to the browser)
+    hasUserLikedPost(post.id)
+      .then(userHasLiked => setLiked(userHasLiked))
+      .catch(err => console.error("Error checking like status:", err));
+    
+    // Subscribe to real-time like count updates - this will keep all browsers in sync
+    const unsubscribe = subscribeToLikeCount(
+      post.id,
+      (count) => {
+        setLikeCount(count);
+      },
+      (error) => {
+        console.error("Error in like count subscription:", error);
+      }
+    );
+    
+    // Clean up subscription when component unmounts
+    return () => unsubscribe();
+    
+  }, [post?.id, post?.slug]);
 
   // Extract headings for Table of Contents
   useEffect(() => {

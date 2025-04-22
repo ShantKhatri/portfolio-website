@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc, increment, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, increment, deleteDoc, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 
 const getUserId = (): string => {
@@ -42,7 +42,10 @@ export async function likePost(postId: string, postSlug: string): Promise<number
     return currentCountDoc.exists() ? currentCountDoc.data().count : 0;
   } catch (error) {
     console.error("Error liking post:", error);
-    throw error;
+    if (error instanceof Error) {
+      console.log(`Firebase error details: ${error.message}`);
+    }
+    return getPostLikeCount(postId);
   }
 }
 
@@ -71,7 +74,10 @@ export async function unlikePost(postId: string): Promise<number> {
     return currentCountDoc.exists() ? currentCountDoc.data().count : 0;
   } catch (error) {
     console.error("Error unliking post:", error);
-    throw error;
+    if (error instanceof Error) {
+      console.log(`Firebase error details: ${error.message}`);
+    }
+    return getPostLikeCount(postId);
   }
 }
 
@@ -83,6 +89,9 @@ export async function hasUserLikedPost(postId: string): Promise<boolean> {
     return userLikeDoc.exists();
   } catch (error) {
     console.error("Error checking if user liked post:", error);
+    if (error instanceof Error) {
+      console.log(`Firebase error details: ${error.message}`);
+    }
     return false;
   }
 }
@@ -95,6 +104,46 @@ export async function getPostLikeCount(postId: string): Promise<number> {
     return postLikeCounterDoc.exists() ? postLikeCounterDoc.data().count : 0;
   } catch (error) {
     console.error("Error getting post like count:", error);
+    if (error instanceof Error) {
+      console.log(`Firebase error details: ${error.message}`);
+    }
     return 0;
   }
+}
+
+export async function ensureLikeCounterExists(postId: string, postSlug: string): Promise<void> {
+  const postLikeCounterRef = doc(db, 'likeCounts', postId);
+  const postLikeCounterDoc = await getDoc(postLikeCounterRef);
+  
+  if (!postLikeCounterDoc.exists()) {
+    await setDoc(postLikeCounterRef, {
+      count: 0,
+      postId,
+      postSlug,
+      updatedAt: new Date()
+    });
+  }
+}
+
+export function subscribeToLikeCount(
+  postId: string, 
+  onUpdate: (count: number) => void,
+  onError: (error: Error) => void
+): () => void {
+  const postLikeCounterRef = doc(db, 'likeCounts', postId);
+  
+  // Create the unsubscribe function
+  const unsubscribe = onSnapshot(
+    postLikeCounterRef,
+    (doc) => {
+      const count = doc.exists() ? doc.data().count : 0;
+      onUpdate(count);
+    },
+    (error) => {
+      console.error("Error in like count subscription:", error);
+      onError(error);
+    }
+  );
+  
+  return unsubscribe;
 }
