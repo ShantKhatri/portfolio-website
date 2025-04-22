@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react';
-import { Github, Linkedin, Mail, FileText } from 'lucide-react';
+import { Github, Linkedin, Mail } from 'lucide-react';
 import Link from 'next/link';
 
 const HeroSection: React.FC = () => {
@@ -59,9 +59,9 @@ const HeroSection: React.FC = () => {
           <a href="mailto:prashantkhatri202@gmail.com" className="text-gray-400 hover:text-white transition-colors" aria-label="Email">
             <Mail size={24} />
           </a>
-          <a href="/resume.pdf" className="text-gray-400 hover:text-white transition-colors" aria-label="Resume" target="_blank" rel="noopener noreferrer">
+          {/* <a href="/resume.pdf" className="text-gray-400 hover:text-white transition-colors" aria-label="Resume" target="_blank" rel="noopener noreferrer">
             <FileText size={24} />
-          </a>
+          </a> */}
         </div>
       </div>
     </section>
