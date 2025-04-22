@@ -21,6 +21,7 @@ import ParticleBackground from '../../../components/ui/ParticleBackground';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/services/blogService';
 import type { BlogPost } from '@/types/blog';
 import { addComment, getCommentsForPost, CommentData } from '@/services/commentService';
+import { likePost, unlikePost, hasUserLikedPost, getPostLikeCount } from '@/services/likeService';
 
 // Add type definitions for comments
 interface Comment {
@@ -113,6 +114,8 @@ const BlogPostPage: React.FC = () => {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [isLikeProcessing, setIsLikeProcessing] = useState(false);
+  const [showLikeAnimation, setShowLikeAnimation] = useState(false);
   
   useEffect(() => {
     const fetchPost = async () => {
@@ -301,28 +304,59 @@ const BlogPostPage: React.FC = () => {
   };
 
   // Handle liking the post
-  const handleLikePost = () => {
-    if (!liked) {
-      setLikeCount(prev => prev + 1);
-    } else {
-      setLikeCount(prev => Math.max(0, prev - 1));
-    }
-    setLiked(!liked);
+  const handleLikePost = async () => {
+    if (!post?.id) return;
     
-    // TODO: Store in database if needed
-    localStorage.setItem(`liked_${post?.slug}`, (!liked).toString());
+    try {
+      setIsLikeProcessing(true);
+      
+      let newLikeCount;
+      
+      if (!liked) {
+        newLikeCount = await likePost(post.id, post.slug);
+        setLiked(true);
+      } else {
+        newLikeCount = await unlikePost(post.id);
+        setLiked(false);
+      }
+      
+      setLikeCount(newLikeCount);
+      
+      setShowLikeAnimation(true);
+      setTimeout(() => setShowLikeAnimation(false), 1000);
+      
+    } catch (error) {
+      console.error("Error updating like status:", error);
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      errorMsg.textContent = 'Failed to update like status. Please try again.';
+      document.body.appendChild(errorMsg);
+      setTimeout(() => {
+        document.body.removeChild(errorMsg);
+      }, 3000);
+    } finally {
+      setIsLikeProcessing(false);
+    }
   };
 
   // Check if user previously liked this post
   useEffect(() => {
-    if (!post?.slug) return;
+    if (!post?.id) return;
     
-    const hasLiked = localStorage.getItem(`liked_${post.slug}`) === 'true';
-    setLiked(hasLiked);
+    const checkLikeStatus = async () => {
+      try {
+        const userHasLiked = await hasUserLikedPost(post.id);
+        setLiked(userHasLiked);
+
+        const count = await getPostLikeCount(post.id);
+        setLikeCount(count);
+      } catch (error) {
+        console.error("Error checking like status:", error);
+      }
+    };
     
-    // TODO: Fetch actual like count from database
-    setLikeCount(Math.floor(Math.random() * 20) + 5); // Dummy data
-  }, [post?.slug]);
+    checkLikeStatus();
+  }, [post?.id]);
 
   // Extract headings for Table of Contents
   useEffect(() => {
@@ -420,12 +454,28 @@ const BlogPostPage: React.FC = () => {
             <div className="relative group">
               <button 
                 onClick={handleLikePost}
-                className={`p-3 rounded-full transition-colors ${liked 
-                  ? 'bg-purple-600 text-white' 
-                  : 'bg-gray-800 hover:bg-gray-700 text-white'}`}
+                disabled={isLikeProcessing}
+                className={`p-3 rounded-full transition-colors relative ${
+                  liked 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-800 hover:bg-gray-700 text-white'
+                }`}
               >
-                <ThumbsUp className="w-5 h-5" />
-                {likeCount > 0 && <span className="block text-xs mt-1">{likeCount}</span>}
+                {isLikeProcessing ? (
+                  <span className="animate-spin rounded-full h-5 w-5 border-2 border-t-transparent border-white"></span>
+                ) : (
+                  <>
+                    <ThumbsUp className={`w-5 h-5 ${showLikeAnimation && liked ? 'animate-ping absolute inset-0 mx-auto my-auto' : ''}`} />
+                  </>
+                )}
+                
+                {likeCount > 0 && (
+                  <span className={`block text-xs mt-1 ${
+                    showLikeAnimation && 'animate-bounce'
+                  }`}>
+                    {likeCount}
+                  </span>
+                )}
               </button>
               <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
                 {liked ? 'Unlike' : 'Like'} this post
@@ -735,6 +785,29 @@ const BlogPostPage: React.FC = () => {
               )}
             </div>
           </section>
+
+          {/* Like count display at the end of article */}
+          <div className="flex items-center justify-start mt-8 gap-2 text-gray-400">
+            <button
+              onClick={handleLikePost}
+              className={`flex items-center gap-1 text-sm px-3 py-1.5 rounded-full transition-colors ${
+                liked ? 'text-white bg-purple-600 hover:bg-purple-700' : 'bg-gray-800/60 hover:bg-gray-700'
+              }`}
+              disabled={isLikeProcessing}
+            >
+              {isLikeProcessing ? (
+                <span className="animate-spin rounded-full h-3 w-3 border-2 border-t-transparent border-current"></span>
+              ) : (
+                <ThumbsUp className="w-4 h-4" />
+              )}
+              <span>{liked ? 'Liked' : 'Like'}</span>
+            </button>
+            <span className="text-sm">
+              {likeCount === 0 ? 'No likes yet' : 
+              likeCount === 1 ? '1 person liked this post' : 
+              `${likeCount} people liked this post`}
+            </span>
+          </div>
 
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
