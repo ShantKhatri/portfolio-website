@@ -116,8 +116,8 @@ const BlogPage: React.FC = () => {
           {filteredPosts.length > 0 ? (
             filteredPosts.map((post: BlogPost) => (
               <Link key={post.id} href={`/blog/${post.slug}`}>
-                <div className="bg-gray-900/50 rounded-xl overflow-hidden group hover:bg-gray-800/70 transition-all duration-300 h-full flex flex-col">
-                  {/* Image Container */}
+                <div className="blog-card">
+                  {/* Image Container with overlay */}
                   <div className="relative h-48 w-full">
                     <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity z-10" />
                     <Image 
@@ -128,10 +128,15 @@ const BlogPage: React.FC = () => {
                       style={{ objectFit: 'cover' }}
                       className="group-hover:scale-105 transition-transform duration-300"
                     />
+                    {/* Reading time badge */}
+                    <span className="absolute bottom-3 right-3 bg-black/70 text-white text-xs px-2 py-1 rounded-full z-20 backdrop-blur-sm border border-gray-800/50">
+                      {post.readTime}
+                    </span>
                   </div>
                   
                   {/* Content Container */}
-                  <div className="p-6 flex flex-col flex-grow">
+                  <div className="p-6 flex flex-col flex-grow relative">
+                    <div className="absolute w-8 h-1 bg-gradient-to-r from-purple-500 to-blue-500 top-0 left-6"></div>
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mb-3">
                       {post.tags.slice(0, 2).map((tag) => (
@@ -150,7 +155,7 @@ const BlogPage: React.FC = () => {
                     </div>
                     
                     {/* Title */}
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-purple-400 transition-colors line-clamp-2">
+                    <h3 className="blog-title text-xl mb-2 group-hover:text-purple-400 transition-colors line-clamp-2">
                       {post.title}
                     </h3>
                     

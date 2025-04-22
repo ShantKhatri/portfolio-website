@@ -406,362 +406,370 @@ const BlogPostPage: React.FC = () => {
 
       {/* Rest of your blog post page content with z-index */}
       <div className="max-w-4xl mx-auto px-8 py-12 relative z-10">
-        {/* Floating Button Group */}
-        <div className="fixed left-4 md:left-8 top-1/2 transform -translate-y-1/2 hidden lg:flex flex-col gap-3 z-40 bg-gray-900/60 backdrop-blur-sm p-2 rounded-lg shadow-lg floating-buttons">
-          {/* Like Button with Tooltip */}
-          <div className="relative group">
-            <button 
-              onClick={handleLikePost}
-              className={`p-3 rounded-full transition-colors ${liked 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-800 hover:bg-gray-700 text-white'}`}
-            >
-              <ThumbsUp className="w-5 h-5" />
-              {likeCount > 0 && <span className="block text-xs mt-1">{likeCount}</span>}
-            </button>
-            <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
-              {liked ? 'Unlike' : 'Like'} this post
-            </div>
-          </div>
-          
-          {/* Comments Button */}
-          <button
-            onClick={() => document.getElementById('comments-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-            aria-label="View comments"
-          >
-            <MessageSquare className="w-5 h-5" />
-            {comments.length > 0 && <span className="block text-xs mt-1">{comments.length}</span>}
-          </button>
-          
-          {/* Bookmark Button */}
-          <button 
-            onClick={() => {
-              // Add bookmark functionality
-              alert('Bookmark feature coming soon!')
-            }}
-            className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-            aria-label="Bookmark post"
-          >
-            <Bookmark className="w-5 h-5" />
-          </button>
-          
-          {/* Share Button */}
-          <button 
-            onClick={() => handleShare('copy')}
-            className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-            aria-label="Copy link"
-          >
-            <Copy className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Social Share Buttons (Mobile) - Remove mt-2 from each button */}
-        <div className="flex items-center justify-center gap-4 py-6 lg:hidden">
-          <button 
-            onClick={() => handleShare('facebook')} 
-            className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
-            aria-label="Share on Facebook"
-          >
-            <Facebook className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => handleShare('twitter')} 
-            className="p-3 rounded-full bg-sky-500 hover:bg-sky-600 transition-colors"
-            aria-label="Share on Twitter"
-          >
-            <Twitter className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => handleShare('linkedin')} 
-            className="p-3 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors"
-            aria-label="Share on LinkedIn"
-          >
-            <Linkedin className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => handleShare('copy')} 
-            className="p-3 rounded-full bg-gray-700 hover:bg-gray-800 transition-colors"
-            aria-label="Copy link"
-          >
-            <Copy className="w-5 h-5" />
-          </button>
-        </div>
+        <div className="absolute inset-0 -mx-4 sm:-mx-8 md:-mx-12 lg:-mx-16 backdrop-blur-sm bg-gradient-to-b from-gray-900/70 to-black/80 shadow-xl border border-gray-800/40 rounded-2xl z-0"></div>
         
-        {/* Article Content with ReactMarkdown */}
-        {post && (
-          <article className="prose prose-invert prose-lg max-w-none">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              rehypePlugins={[
-                rehypeRaw,
-                rehypeSanitize,
-                rehypeSlug,
-                [rehypeAutolinkHeadings, { behavior: 'wrap' }]
-              ]}
-              components={{
-                h1: ({...props}) => <h1 className="text-3xl font-bold mt-8 mb-4 text-white" {...props} />,
-                h2: ({...props}) => <h2 className="text-2xl font-bold mt-8 mb-3 text-white" {...props} />,
-                h3: ({...props}) => <h3 className="text-xl font-bold mt-6 mb-3 text-white" {...props} />,
-                p: ({...props}) => <p className="mb-4 text-gray-300 leading-relaxed" {...props} />,
-                ul: ({...props}) => <ul className="mb-4 ml-4 list-disc space-y-2 text-gray-300" {...props} />,
-                ol: ({...props}) => <ol className="mb-4 ml-4 list-decimal space-y-2 text-gray-300" {...props} />,
-                li: ({...props}) => <li className="pl-1 leading-relaxed" {...props} />,
-                blockquote: ({...props}) => (
-                  <blockquote className="pl-4 border-l-4 border-purple-500 italic my-6 text-gray-400" {...props} />
-                ),
-                img: ({src, alt}) => (
-                  <div className="my-8">
-                    <Image 
-                      src={src || ''} 
-                      alt={alt || 'Blog image'} 
-                      width={800} 
-                      height={400} 
-                      className="rounded-lg mx-auto"
-                    />
-                  </div>
-                ),
-                a: (props) => (
-                  <a {...props} className="text-purple-400 hover:text-purple-300 transition-colors" />
-                ),
-                code: CodeBlock,
-                pre: ({...props}) => <pre className="bg-transparent p-0" {...props} />,
-                table: (props) => (
-                  <div className="overflow-x-auto my-8">
-                    <table className="min-w-full border-collapse border border-gray-800" {...props} />
-                  </div>
-                ),
-                th: ({...props}) => (
-                  <th className="px-4 py-2 bg-gray-800 border border-gray-700 text-left" {...props} />
-                ),
-                td: ({...props}) => (
-                  <td className="px-4 py-2 border border-gray-800" {...props} />
-                ),
-                hr: ({...props}) => <hr className="my-8 border-gray-800" {...props} />,
-                strong: ({...props}) => <strong className="font-bold text-white" {...props} />,
-                em: ({...props}) => <em className="italic" {...props} />,
-              }}
-            >
-              {processMarkdown(post.content)}
-            </ReactMarkdown>
-          </article>
-        )}
-
-        {/* Tags - Mobile View */}
-        <div className="mt-12 flex flex-wrap gap-2 lg:hidden">
-          {post.tags.map(tag => (
-            <Link 
-              key={tag} 
-              href={`/blog?tag=${tag}`} 
-              className="flex items-center text-sm px-3 py-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
-            >
-              <Tag className="w-3 h-3 mr-1" /> {tag}
-            </Link>
-          ))}
-        </div>
-
-        {/* Author Section */}
-        <div className="mt-16 pt-8 border-t border-gray-800">
-          <div className="flex items-center">
-          <div className="relative h-16 w-16 rounded-full overflow-hidden">
-            <Image 
-              src="https://gjvntlanwutavbwg.public.blob.vercel-storage.com/profile-photo.jpg-jTPTZwUgndS6kHzvRr5yfTye1NMaWh.png" 
-              alt="Author" 
-              fill
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
-            <div className="ml-4">
-              <h3 className="text-lg font-bold">Prashantkumar Khatri</h3>
-              <p className="text-gray-400">Full Stack Developer & Automation Expert</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Comment Section */}
-        <section className="mt-16 pt-8 border-t border-gray-800" id="comments-section">
-          <h2 className="text-2xl font-bold mb-6">Discussion</h2>
-          
-          {/* Comment Form */}
-          <form onSubmit={handleCommentSubmit} className="mb-10">
-            <div className="mb-4">
-              <label htmlFor="comment" className="block text-sm font-medium text-gray-400 mb-2">
-                Share your thoughts
-              </label>
-              <textarea
-                id="comment"
-                rows={4}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                placeholder="Write your comment here..."
-                required
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  value={commentName}
-                  onChange={(e) => setCommentName(e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="Your name"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  value={commentEmail}
-                  onChange={(e) => setCommentEmail(e.target.value)}
-                  className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="your.email@example.com (not displayed publicly)"
-                  required
-                />
+        <div className="hidden lg:block absolute top-40 -left-64 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl z-0"></div>
+        <div className="hidden lg:block absolute top-96 -right-64 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl z-0"></div>
+        
+        <div className="absolute inset-0 texture-overlay z-0"></div>
+        
+        <div className="relative z-10">
+          {/* Floating Button Group */}
+          <div className="fixed left-4 md:left-8 top-1/2 transform -translate-y-1/2 hidden lg:flex flex-col gap-3 z-40 bg-gray-900/60 backdrop-blur-sm p-2 rounded-lg shadow-lg floating-buttons">
+            {/* Like Button with Tooltip */}
+            <div className="relative group">
+              <button 
+                onClick={handleLikePost}
+                className={`p-3 rounded-full transition-colors ${liked 
+                  ? 'bg-purple-600 text-white' 
+                  : 'bg-gray-800 hover:bg-gray-700 text-white'}`}
+              >
+                <ThumbsUp className="w-5 h-5" />
+                {likeCount > 0 && <span className="block text-xs mt-1">{likeCount}</span>}
+              </button>
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 rounded text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">
+                {liked ? 'Unlike' : 'Like'} this post
               </div>
             </div>
             
+            {/* Comments Button */}
             <button
-              type="submit"
-              disabled={isSubmittingComment}
-              className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors flex items-center"
+              onClick={() => document.getElementById('comments-section')?.scrollIntoView({ behavior: 'smooth' })}
+              className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              aria-label="View comments"
             >
-              {isSubmittingComment ? (
-                <>
-                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
-                  Submitting...
-                </>
-              ) : 'Post Comment'}
+              <MessageSquare className="w-5 h-5" />
+              {comments.length > 0 && <span className="block text-xs mt-1">{comments.length}</span>}
             </button>
-          </form>
-
-          {/* Comments List */}
-          <div className="space-y-6">
-            {comments.length === 0 ? (
-              <p className="text-center py-8 text-gray-400">Be the first to comment on this post!</p>
-            ) : (
-              <>
-                <h3 className="font-medium text-gray-300">{comments.length} Comment{comments.length !== 1 && 's'}</h3>
-                {comments.map((comment) => (
-                  <div key={comment.id} className="border-l-4 border-purple-500 pl-4 py-2">
-                    <div className="flex items-center mb-2">
-                      <div className="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-medium">
-                        {comment.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="ml-3">
-                        <h4 className="font-medium text-white">{comment.name}</h4>
-                        <p className="text-sm text-gray-400">{formatDate(comment.createdAt)}</p>
-                      </div>
-                    </div>
-                    <p className="text-gray-300">{comment.text}</p>
-                    
-                    {/* Reply button */}
-                    <button 
-                      onClick={() => handleReplyClick(comment.id)}
-                      className="text-sm text-purple-400 hover:text-purple-300 mt-2 flex items-center"
-                    >
-                      <MessageSquare className="h-3 w-3 mr-1" /> Reply
-                    </button>
-                    
-                    {/* Nested replies */}
-                    {comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-4 ml-6 space-y-4">
-                        {comment.replies.map((reply) => (
-                          <div key={reply.id} className="border-l-2 border-gray-700 pl-4 py-1">
-                            <div className="flex items-center mb-1">
-                              <div className="bg-gray-700 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs font-medium">
-                                {reply.name.charAt(0).toUpperCase()}
-                              </div>
-                              <div className="ml-2">
-                                <h5 className="font-medium text-white text-sm">{reply.name}</h5>
-                                <p className="text-xs text-gray-400">{formatDate(reply.createdAt)}</p>
-                              </div>
-                            </div>
-                            <p className="text-gray-300 text-sm">{reply.text}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    
-                    {/* Reply form (conditionally rendered) */}
-                    {replyingTo === comment.id && (
-                      <div className="mt-3 ml-6">
-                        <form onSubmit={(e) => handleReplySubmit(e, comment.id)}>
-                          <textarea
-                            rows={2}
-                            value={replyText}
-                            onChange={(e) => setReplyText(e.target.value)}
-                            className="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-white text-sm mb-2"
-                            placeholder="Write your reply..."
-                            required
-                          />
-                          <div className="flex space-x-2">
-                            <button
-                              type="submit"
-                              className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm transition-colors"
-                            >
-                              Post Reply
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setReplyingTo(null)}
-                              className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white rounded-md text-sm transition-colors"
-                            >
-                              Cancel
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
+            
+            {/* Bookmark Button */}
+            <button 
+              onClick={() => {
+                // Add bookmark functionality
+                alert('Bookmark feature coming soon!')
+              }}
+              className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              aria-label="Bookmark post"
+            >
+              <Bookmark className="w-5 h-5" />
+            </button>
+            
+            {/* Share Button */}
+            <button 
+              onClick={() => handleShare('copy')}
+              className="p-3 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              aria-label="Copy link"
+            >
+              <Copy className="w-5 h-5" />
+            </button>
           </div>
-        </section>
-
-        {/* Related Posts */}
-        {relatedPosts.length > 0 && (
-          <div className="mt-16">
-            <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {relatedPosts.map(relatedPost => (
-                <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
-                  <div className="bg-gray-900/50 rounded-xl overflow-hidden group hover:bg-gray-800/70 transition-all duration-300 h-full flex flex-col">
-                    <div className="relative h-40 w-full">
+          {/* Social Share Buttons (Mobile) */}
+          <div className="flex items-center justify-center gap-4 py-6 lg:hidden">
+            <button 
+              onClick={() => handleShare('facebook')} 
+              className="p-3 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors"
+              aria-label="Share on Facebook"
+            >
+              <Facebook className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => handleShare('twitter')} 
+              className="p-3 rounded-full bg-sky-500 hover:bg-sky-600 transition-colors"
+              aria-label="Share on Twitter"
+            >
+              <Twitter className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => handleShare('linkedin')} 
+              className="p-3 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors"
+              aria-label="Share on LinkedIn"
+            >
+              <Linkedin className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => handleShare('copy')} 
+              className="p-3 rounded-full bg-gray-700 hover:bg-gray-800 transition-colors"
+              aria-label="Copy link"
+            >
+              <Copy className="w-5 h-5" />
+            </button>
+          </div>
+          
+          {/* Article Content with ReactMarkdown */}
+          {post && (
+            <article className="prose prose-invert prose-lg max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[
+                  rehypeRaw,
+                  rehypeSanitize,
+                  rehypeSlug,
+                  [rehypeAutolinkHeadings, { behavior: 'wrap' }]
+                ]}
+                components={{
+                  h1: ({...props}) => <h1 className="text-3xl font-bold mt-8 mb-4 text-white" {...props} />,
+                  h2: ({...props}) => <h2 className="text-2xl font-bold mt-8 mb-3 text-white" {...props} />,
+                  h3: ({...props}) => <h3 className="text-xl font-bold mt-6 mb-3 text-white" {...props} />,
+                  p: ({...props}) => <p className="mb-4 text-gray-300 leading-relaxed" {...props} />,
+                  ul: ({...props}) => <ul className="mb-4 ml-4 list-disc space-y-2 text-gray-300" {...props} />,
+                  ol: ({...props}) => <ol className="mb-4 ml-4 list-decimal space-y-2 text-gray-300" {...props} />,
+                  li: ({...props}) => <li className="pl-1 leading-relaxed" {...props} />,
+                  blockquote: ({...props}) => (
+                    <blockquote className="pl-4 border-l-4 border-purple-500 italic my-6 text-gray-400" {...props} />
+                  ),
+                  img: ({src, alt}) => (
+                    <div className="my-8">
                       <Image 
-                        src={relatedPost.coverImage} 
-                        alt={relatedPost.title} 
-                        fill
-                        style={{ objectFit: 'cover' }}
-                        className="group-hover:scale-105 transition-transform duration-300"
+                        src={src || ''} 
+                        alt={alt || 'Blog image'} 
+                        width={800} 
+                        height={400} 
+                        className="rounded-lg mx-auto"
                       />
                     </div>
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold mb-2 group-hover:text-purple-400 transition-colors">
-                        {relatedPost.title}
-                      </h3>
-                      <div className="flex items-center text-sm text-gray-400">
-                        <span>{relatedPost.date}</span>
-                        <span className="mx-2">•</span>
-                        <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> {relatedPost.readTime}</span>
-                      </div>
+                  ),
+                  a: (props) => (
+                    <a {...props} className="text-purple-400 hover:text-purple-300 transition-colors" />
+                  ),
+                  code: CodeBlock,
+                  pre: ({...props}) => <pre className="bg-transparent p-0" {...props} />,
+                  table: (props) => (
+                    <div className="overflow-x-auto my-8">
+                      <table className="min-w-full border-collapse border border-gray-800" {...props} />
                     </div>
-                  </div>
-                </Link>
-              ))}
+                  ),
+                  th: ({...props}) => (
+                    <th className="px-4 py-2 bg-gray-800 border border-gray-700 text-left" {...props} />
+                  ),
+                  td: ({...props}) => (
+                    <td className="px-4 py-2 border border-gray-800" {...props} />
+                  ),
+                  hr: ({...props}) => <hr className="my-8 border-gray-800" {...props} />,
+                  strong: ({...props}) => <strong className="font-bold text-white" {...props} />,
+                  em: ({...props}) => <em className="italic" {...props} />,
+                }}
+              >
+                {processMarkdown(post.content)}
+              </ReactMarkdown>
+            </article>
+          )}
+
+          {/* Tags - Mobile View */}
+          <div className="mt-12 flex flex-wrap gap-2 lg:hidden">
+            {post.tags.map(tag => (
+              <Link 
+                key={tag} 
+                href={`/blog?tag=${tag}`} 
+                className="flex items-center text-sm px-3 py-1 rounded-full bg-gray-800 hover:bg-gray-700 transition-colors"
+              >
+                <Tag className="w-3 h-3 mr-1" /> {tag}
+              </Link>
+            ))}
+          </div>
+
+          {/* Author Section */}
+          <div className="mt-16 pt-8 border-t border-gray-800">
+            <div className="flex items-center">
+            <div className="relative h-16 w-16 rounded-full overflow-hidden">
+              <Image 
+                src="https://gjvntlanwutavbwg.public.blob.vercel-storage.com/profile-photo.jpg-jTPTZwUgndS6kHzvRr5yfTye1NMaWh.png" 
+                alt="Author" 
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+              <div className="ml-4">
+                <h3 className="text-lg font-bold">Prashantkumar Khatri</h3>
+                <p className="text-gray-400">Full Stack Developer & Automation Expert</p>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Comment Section */}
+          <section className="mt-16 pt-8 border-t border-gray-800" id="comments-section">
+            <h2 className="text-2xl font-bold mb-6">Discussion</h2>
+            
+            {/* Comment Form */}
+            <form onSubmit={handleCommentSubmit} className="mb-10">
+              <div className="mb-4">
+                <label htmlFor="comment" className="block text-sm font-medium text-gray-400 mb-2">
+                  Share your thoughts
+                </label>
+                <textarea
+                  id="comment"
+                  rows={4}
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  placeholder="Write your comment here..."
+                  required
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-400 mb-2">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={commentName}
+                    onChange={(e) => setCommentName(e.target.value)}
+                    className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="Your name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-2">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={commentEmail}
+                    onChange={(e) => setCommentEmail(e.target.value)}
+                    className="w-full bg-gray-900 border border-gray-800 rounded-lg p-3 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    placeholder="your.email@example.com (not displayed publicly)"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isSubmittingComment}
+                className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg font-medium transition-colors flex items-center"
+              >
+                {isSubmittingComment ? (
+                  <>
+                    <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></span>
+                    Submitting...
+                  </>
+                ) : 'Post Comment'}
+              </button>
+            </form>
+
+            {/* Comments List */}
+            <div className="space-y-6">
+              {comments.length === 0 ? (
+                <p className="text-center py-8 text-gray-400">Be the first to comment on this post!</p>
+              ) : (
+                <>
+                  <h3 className="font-medium text-gray-300">{comments.length} Comment{comments.length !== 1 && 's'}</h3>
+                  {comments.map((comment) => (
+                    <div key={comment.id} className="border-l-4 border-purple-500 pl-4 py-2">
+                      <div className="flex items-center mb-2">
+                        <div className="bg-purple-600 text-white rounded-full h-8 w-8 flex items-center justify-center font-medium">
+                          {comment.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="ml-3">
+                          <h4 className="font-medium text-white">{comment.name}</h4>
+                          <p className="text-sm text-gray-400">{formatDate(comment.createdAt)}</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-300">{comment.text}</p>
+                      
+                      {/* Reply button */}
+                      <button 
+                        onClick={() => handleReplyClick(comment.id)}
+                        className="text-sm text-purple-400 hover:text-purple-300 mt-2 flex items-center"
+                      >
+                        <MessageSquare className="h-3 w-3 mr-1" /> Reply
+                      </button>
+                      
+                      {/* Nested replies */}
+                      {comment.replies && comment.replies.length > 0 && (
+                        <div className="mt-4 ml-6 space-y-4">
+                          {comment.replies.map((reply) => (
+                            <div key={reply.id} className="border-l-2 border-gray-700 pl-4 py-1">
+                              <div className="flex items-center mb-1">
+                                <div className="bg-gray-700 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs font-medium">
+                                  {reply.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="ml-2">
+                                  <h5 className="font-medium text-white text-sm">{reply.name}</h5>
+                                  <p className="text-xs text-gray-400">{formatDate(reply.createdAt)}</p>
+                                </div>
+                              </div>
+                              <p className="text-gray-300 text-sm">{reply.text}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Reply form (conditionally rendered) */}
+                      {replyingTo === comment.id && (
+                        <div className="mt-3 ml-6">
+                          <form onSubmit={(e) => handleReplySubmit(e, comment.id)}>
+                            <textarea
+                              rows={2}
+                              value={replyText}
+                              onChange={(e) => setReplyText(e.target.value)}
+                              className="w-full bg-gray-900 border border-gray-800 rounded-lg p-2 text-white text-sm mb-2"
+                              placeholder="Write your reply..."
+                              required
+                            />
+                            <div className="flex space-x-2">
+                              <button
+                                type="submit"
+                                className="px-3 py-1 bg-purple-600 hover:bg-purple-700 text-white rounded-md text-sm transition-colors"
+                              >
+                                Post Reply
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setReplyingTo(null)}
+                                className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white rounded-md text-sm transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          </section>
+
+          {/* Related Posts */}
+          {relatedPosts.length > 0 && (
+            <div className="mt-16">
+              <h2 className="text-2xl font-bold mb-6">Related Articles</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {relatedPosts.map(relatedPost => (
+                  <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
+                    <div className="bg-gray-900/50 rounded-xl overflow-hidden group hover:bg-gray-800/70 transition-all duration-300 h-full flex flex-col">
+                      <div className="relative h-40 w-full">
+                        <Image 
+                          src={relatedPost.coverImage} 
+                          alt={relatedPost.title} 
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          className="group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-lg font-bold mb-2 group-hover:text-purple-400 transition-colors">
+                          {relatedPost.title}
+                        </h3>
+                        <div className="flex items-center text-sm text-gray-400">
+                          <span>{relatedPost.date}</span>
+                          <span className="mx-2">•</span>
+                          <span className="flex items-center"><Clock className="w-4 h-4 mr-1" /> {relatedPost.readTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -41,3 +41,70 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Typography enhancements */
+h1, h2, h3, h4, h5, h6 {
+  font-family: serif;
+  letter-spacing: -0.025em;
+}
+
+.blog-content p {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.blog-title {
+  font-family: serif;
+  font-weight: bold;
+}
+
+/* Card enhancements */
+.blog-card {
+  background-color: rgba(17, 24, 39, 0.5);
+  border-radius: 0.75rem;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(31, 41, 55, 0.5);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.blog-card:hover {
+  background-color: rgba(31, 41, 55, 0.7);
+  box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.1);
+  transform: translateY(-0.25rem);
+}
+
+/* Add texture and visual elements */
+.texture-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.05' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+/* Enhanced blog post styling */
+.blog-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+  z-index: -1;
+}
+
+/* Pull quotes styling */
+.blog-quote {
+  margin: 2rem 0;
+  padding: 1rem 0 1rem 1.5rem;
+  border-left: 4px solid #a855f7;
+  background-color: rgba(17, 24, 39, 0.5);
+  backdrop-filter: blur(4px);
+  border-radius: 0 0.5rem 0.5rem 0;
+  position: relative;
+}

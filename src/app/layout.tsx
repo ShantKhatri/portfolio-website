@@ -4,6 +4,7 @@ import Navbar from '../components/Navbar';
 import "./globals.css";
 import JsonLd from '../components/JsonLd';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { inter, playfair } from './fonts';
 
 export const metadata: Metadata = {
   title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
@@ -99,9 +100,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head />
-      <body className="bg-black text-white">
+      <body className="font-sans">
         <JsonLd />
         <Navbar />
         <AuthProvider>
