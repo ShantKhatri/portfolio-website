@@ -5,6 +5,7 @@ import "./globals.css";
 import JsonLd from '../components/JsonLd';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { inter, playfair } from './fonts';
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
   title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
@@ -105,6 +106,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body className="font-sans">
         <JsonLd />
         <Navbar />
+        <Analytics/>
         <AuthProvider>
           <main className="relative z-10">{children}</main>
         </AuthProvider>
