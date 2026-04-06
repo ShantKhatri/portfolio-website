@@ -5,6 +5,7 @@ export interface Project {
   tech: string[];
   color: string;
   icon: string;
+  category: string;
   links: {
     github?: string;
     live?: string;
@@ -14,59 +15,63 @@ export interface Project {
 export const projects: Project[] = [
   {
     id: 1,
-    title: 'FloraFinder – AI Plant Identifier App',
-    description: 'ML-powered plant recognition mobile application with 95% accuracy rate for identifying plant species from photos.',
-    tech: ['React Native', 'TensorFlow', 'Cloud Vision API', 'Node.js', 'Firebase'],
-    color: '#4caf50',
-    icon: 'leaf',
+    title: 'CommitHunter',
+    description: 'An automated system using rule-based logic and ML models to identify test-breaking Git commits with high precision. Integrated into CI pipelines and GitHub workflows.',
+    tech: ['Python', 'NLP', 'ML', 'GitHub APIs', 'Jenkins', 'MongoDB'],
+    color: '#8b5cf6',
+    icon: 'search',
+    category: 'AI/ML',
     links: {
-      github: 'https://github.com/ShantKhatri/florafinder',
-      live: 'https://florafinder-demo.vercel.app'
-    }
+      github: 'https://github.com/adoptium/CommitHunter',
+    },
   },
   {
     id: 2,
-    title: 'PrintSEC – Secure Printing System',
-    description: 'Cloud-based secure printing platform with AI-based redaction and document handling with geolocation-based printing.',
-    tech: ['React Native', 'React', 'Firebase', 'OCR', 'NLP'],
-    color: '#2196f3',
-    icon: 'printer',
+    title: 'Financial Agent',
+    description: 'A privacy-first desktop AI assistant that guides users through financial processes like loans and KYC using an offline, chat-based interface with multilingual support.',
+    tech: ['LLMs', 'BrowserUse', 'OCR', 'Python', 'P2P Caching'],
+    color: '#06b6d4',
+    icon: 'bot',
+    category: 'AI/ML',
     links: {
-      github: 'https://github.com/ShantKhatri/printsec',
-    }
+      github: 'https://github.com/SampattiCard/FinancialAgent',
+    },
   },
   {
     id: 3,
-    title: 'DigitalWiseon – AI Chatbot Business Site',
-    description: 'Full-stack solution for service bookings with an integrated intelligent chatbot for customer queries and support.',
-    tech: ['Next.js', 'Firebase', 'React-Chatbot-Kit'],
-    color: '#9c27b0',
-    icon: 'messageSquare',
+    title: 'FloraFinder: Nature Mate',
+    description: 'Mobile application to identify any plant by scanning it. Uses Cloud Vision API and Trefle API with boolean queries for accurate plant identification.',
+    tech: ['React Native', 'Node.js', 'MongoDB', 'Firebase', 'Cloud Vision API', 'Trefle API'],
+    color: '#22c55e',
+    icon: 'leaf',
+    category: 'Mobile',
     links: {
-      github: 'https://github.com/ShantKhatri/digitalwiseon',
-      live: 'https://digitalwiseon.com'
-    }
+      github: 'https://github.com/ShantKhatri/florafinder',
+    },
   },
   {
     id: 4,
-    title: 'Generic Testing Framework',
-    description: 'Comprehensive testing framework for native and web applications using Playwright and TestNG with enhanced logging.',
-    tech: ['Playwright', 'TestNG', 'Java', 'Log4j', 'SimpleJavaMailer'],
-    color: '#ff9800',
-    icon: 'testTube',
+    title: 'PrintSec',
+    description: 'Cloud-based secure printing service enabling users to print documents from devices or cloud storage to any geographically nearby printer, with fully secured document handling.',
+    tech: ['React Native', 'React', 'Firebase', 'Capacitor', 'Cloud Storage'],
+    color: '#3b82f6',
+    icon: 'printer',
+    category: 'Full Stack',
     links: {
-      github: 'https://github.com/ShantKhatri/testing-framework'
-    }
+      github: 'https://github.com/ShantKhatri/printsec',
+    },
   },
   {
     id: 5,
-    title: 'Eclipse 4diac Editor Tools',
-    description: 'Automation tools for graphical editors with hierarchical nesting and syntax error detection for IoT applications.',
-    tech: ['Java', 'SWTBot', 'JUnit', 'Eclipse RCP'],
-    color: '#f44336',
-    icon: 'code',
+    title: 'DigitalWiseon.com',
+    description: 'Business website with professional UI, order placement, tracking, service query, email notifications, integrated chatbot, and secure user experience.',
+    tech: ['Next.js', 'Node.js', 'Express.js', 'Firebase', 'react-chatbot-kit'],
+    color: '#f59e0b',
+    icon: 'globe',
+    category: 'Full Stack',
     links: {
-      github: 'https://github.com/eclipse-4diac/4diac-ide'
-    }
-  }
+      github: 'https://github.com/ShantKhatri/digitalwiseon',
+      live: 'https://digitalwiseon.com',
+    },
+  },
 ];

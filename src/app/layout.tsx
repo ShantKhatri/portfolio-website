@@ -8,8 +8,8 @@ import { inter, playfair } from './fonts';
 import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
-  title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
-  description: 'Experienced Full Stack Developer specializing in Machine Learning, Test Automation, CI/CD pipelines, and Cloud Architecture with expertise in React, TypeScript, and Next.js',
+  title: 'Prashantkumar Khatri | Freelance Software Engineer & Open Source Contributor',
+  description: 'Freelance Software Engineer specializing in Full-Stack Development, AI/ML, Test Automation, and Open Source. 2x Google Summer of Code contributor with experience across React, Next.js, Python, and cloud technologies.',
   keywords: [
     // Core Professional Keywords (High Search Volume)
     'full stack developer', 'machine learning engineer', 'automation expert', 
@@ -69,9 +69,9 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: 'https://prashantkhatri.com',
-    siteName: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
-    title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
-    description: 'Experienced Full Stack Developer specializing in Machine Learning, Test Automation, CI/CD pipelines, and Cloud Architecture with expertise in React, TypeScript, and Next.js',
+    siteName: 'Prashantkumar Khatri | Freelance Software Engineer',
+    title: 'Prashantkumar Khatri | Freelance Software Engineer & Open Source Contributor',
+    description: 'Freelance Software Engineer specializing in Full-Stack Development, AI/ML, Test Automation, and Open Source. 2x Google Summer of Code contributor.',
     images: [
       {
         url: 'https://prashantkhatri.com/og-image.jpg',
@@ -83,8 +83,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Prashantkumar Khatri | Full Stack & ML Automation Engineer',
-    description: 'Experienced Full Stack Developer specializing in Machine Learning, Test Automation, CI/CD pipelines, and Cloud Architecture',
+    title: 'Prashantkumar Khatri | Freelance Software Engineer',
+    description: 'Freelance Software Engineer specializing in Full-Stack, AI/ML, Test Automation, and Open Source. 2x GSoC contributor.',
     images: ['https://prashantkhatri.com'],
   },
   viewport: 'width=device-width, initial-scale=1',
