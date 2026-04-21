@@ -6,6 +6,7 @@ import JsonLd from '../components/JsonLd';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { inter, playfair } from './fonts';
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: 'Prashantkumar Khatri | Freelance Software Engineer & Open Source Contributor',
@@ -107,6 +108,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <JsonLd />
         <Navbar />
         <Analytics/>
+        <SpeedInsights />
         <AuthProvider>
           <main className="relative z-10">{children}</main>
         </AuthProvider>
