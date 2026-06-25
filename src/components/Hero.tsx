@@ -94,14 +94,14 @@ export function Hero() {
           rootcause.hashnode.dev
           <ExternalLink size={11} strokeWidth={1.5} className="opacity-60" />
         </Link>
-        <a
+        {/* <a
           href="/resume.pdf"
           download
           className="inline-flex items-center gap-1.5 text-[18px] px-4 py-2 border border-[var(--border-mid)] rounded-full text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors duration-150"
         >
           <FileText size={13} strokeWidth={1.5} />
           resume
-        </a>
+        </a> */}
       </motion.div>
 
       {/* Availability */}
