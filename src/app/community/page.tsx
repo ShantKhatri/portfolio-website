@@ -6,8 +6,23 @@ import type { Talk } from "@/types/content";
 import { ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Community",
-  description: "Conferences, volunteering, OSS organizations, and speaking engagements.",
+  title: "Community & Open Source",
+  description:
+    "Prashant Khatri's open source community involvement: GSoC at Eclipse, DMP at SampattiCard and Shikshalokam, CNCF, KubeCon India, Open Source Summit Japan, GSSoC, and DevCard ecosystem leadership.",
+  keywords: [
+    "GSoC Eclipse Foundation",
+    "DMP Open Source",
+    "KubeCon India 2024",
+    "Open Source Summit Japan 2025",
+    "GSSoC",
+    "Google Summer of Code India",
+    "CNCF Community",
+    "Eclipse JKube Contributor",
+    "DevCard Open Source",
+    "Open Source Conferences India",
+    "Cloud Native Community",
+    "BazelCon 2024"
+  ],
 };
 
 export default function CommunityPage() {

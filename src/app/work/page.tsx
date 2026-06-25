@@ -6,7 +6,23 @@ import { PROJECTS, EXPERIENCE, SKILLS } from "@/lib/data";
 export const metadata: Metadata = {
   title: "Work & Journey",
   description:
-    "My journey through platform engineering, OSS contributions, and infrastructure tooling.",
+    "Platform engineering and DevOps journey by Prashant Khatri. GSoC 2024 and 2025 at Eclipse Foundation, CNCF Score contributor, FlowProxy, DevCard founder. Open source infrastructure projects.",
+  keywords: [
+    "Platform Engineering Projects",
+    "DevOps Portfolio",
+    "GSoC 2024",
+    "GSoC 2025",
+    "Eclipse JKube",
+    "Eclipse Adoptium",
+    "CNCF Score",
+    "score-hub-cli",
+    "FlowProxy",
+    "DevCard",
+    "Open Source Developer India",
+    "Kubernetes Projects",
+    "Go Projects",
+    "CommitHunter"
+  ],
 };
 
 export default function WorkPage() {

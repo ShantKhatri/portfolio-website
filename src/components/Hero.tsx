@@ -2,7 +2,7 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { ExternalLink, FileText, Github, Rss } from "lucide-react";
+import { ExternalLink, Github, Rss } from "lucide-react";
 
 export function Hero() {
   const prefersReducedMotion = useReducedMotion();

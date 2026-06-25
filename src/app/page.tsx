@@ -8,14 +8,14 @@ import { PROJECTS, EXPERIENCE, RECOGNITION } from "@/lib/data";
 import type { NowItem } from "@/types/content";
 import nowData from "../../content/now.json";
 import talksData from "../../content/talks.json";
-import { Mail, Linkedin, Github, FileText, ExternalLink } from "lucide-react";
+import { Mail, Linkedin, Github, ExternalLink } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import type { Talk } from "@/types/content";
 
 export const metadata: Metadata = {
-  title: "Platform Engineer & OSS Contributor",
+  title: "Prashant Khatri · Platform Engineer & DevOps Engineer",
   description:
-    "Platform and OSS engineer based in Ahmedabad, India. 2× GSoC at Eclipse Foundation. Active in CNCF Score. Founder of DevCard. Open to work.",
+    "Prashant Khatri is a Platform Engineer, DevOps specialist, and Open Source developer in India. 2× GSoC, CNCF Score contributor, and DevCard founder.",
 };
 
 export default async function HomePage() {
@@ -31,6 +31,18 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "Prashant Khatri Portfolio",
+            url: "https://prashantkhatri.com",
+            description: "Portfolio of Prashant Khatri, Platform Engineer and Open Source Developer."
+          })
+        }}
+      />
       {/* Hero */}
       <Hero />
 

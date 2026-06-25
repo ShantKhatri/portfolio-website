@@ -23,6 +23,22 @@ export const metadata: Metadata = {
   },
   description:
     "Platform and OSS engineer based in Ahmedabad, India. 2× GSoC at Eclipse Foundation. Active in CNCF Score. Founder of DevCard.",
+  keywords: [
+    "Prashant Khatri",
+    "Platform Engineer",
+    "DevOps Engineer",
+    "Site Reliability Engineer",
+    "SRE",
+    "CNCF Score Contributor",
+    "Open Source Developer",
+    "GSoC 2024",
+    "GSoC 2025",
+    "Eclipse Foundation",
+    "DevCard Founder",
+    "Go Developer",
+    "Kubernetes",
+    "Infrastructure Tooling"
+  ],
   metadataBase: new URL("https://prashantkhatri.com"),
   alternates: { canonical: "/" },
   authors: [{ name: "Prashant Khatri" }],
@@ -85,6 +101,27 @@ export default function RootLayout({
             data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
           />
         )}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              name: "Prashant Khatri",
+              url: "https://prashantkhatri.com",
+              jobTitle: ["Platform Engineer", "DevOps Engineer"],
+              worksFor: {
+                "@type": "Organization",
+                name: "Open Source Contributor (CNCF, Eclipse Foundation)"
+              },
+              sameAs: [
+                "https://github.com/ShantKhatri",
+                "https://linkedin.com/in/prashant-khatri",
+                "https://rootcause.hashnode.dev"
+              ]
+            })
+          }}
+        />
       </head>
       <body className="font-sans bg-[var(--bg)] text-[var(--fg)]">
         <ThemeProvider

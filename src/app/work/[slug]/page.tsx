@@ -42,8 +42,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!project) return { title: "Project not found" };
 
   return {
-    title: project.name,
+    title: `${project.name} · ${project.tags.join(" ")}`,
     description: project.tagline,
+    keywords: [
+      project.name,
+      ...project.tags,
+      ...project.stack,
+      "Open Source",
+      "Prashant Khatri"
+    ],
   };
 }
 
@@ -63,6 +70,23 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: project.name,
+            description: project.tagline,
+            applicationCategory: "DeveloperApplication",
+            author: {
+              "@type": "Person",
+              name: "Prashant Khatri"
+            },
+            url: project.live || project.github || `https://prashantkhatri.com/work/${project.slug}`
+          })
+        }}
+      />
       {/* Back link */}
       <div className="pt-8 pb-0">
         <Link

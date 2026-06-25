@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail, Linkedin, Github, FileText, ExternalLink } from "lucide-react";
+import { Mail, Linkedin, Github, ExternalLink } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact",

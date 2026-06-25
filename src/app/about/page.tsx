@@ -3,8 +3,23 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { EDUCATION, CERTIFICATIONS } from "@/lib/data";
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Platform and OSS engineer based in Ahmedabad, India. Building infrastructure tooling and contributing to the CNCF Score ecosystem.",
+  title: "About Prashant Khatri",
+  description:
+    "Prashant Khatri is a Platform Engineer and DevOps developer from Ahmedabad, India. CNCF Score contributor, 2x Google Summer of Code developer at Eclipse Foundation. Builder of open source infrastructure tools.",
+  keywords: [
+    "Prashant Khatri",
+    "Platform Engineer India",
+    "DevOps Engineer India",
+    "Open Source Developer India",
+    "CNCF Contributor",
+    "Google Summer of Code",
+    "Eclipse Foundation",
+    "Kubernetes Developer",
+    "Go Language Developer",
+    "Ahmedabad Developer",
+    "NPTEL Cloud Computing",
+    "Linux Foundation"
+  ],
 };
 
 export default function AboutPage() {
