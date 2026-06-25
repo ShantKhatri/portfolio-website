@@ -1,0 +1,12 @@
+[
+  {
+    "id": "opensearch-ahmedabad",
+    "title": "OpenSearch in e-commerce: from broken search to business insight",
+    "event": "OpenSearch Meetup Ahmedabad",
+    "date": "2026",
+    "type": "delivered",
+    "description": "Hybrid BM25 + k-NN retrieval, RRF, and a full CDC pipeline over 19K+ products.",
+    "slides": "",
+    "video": ""
+  }
+]

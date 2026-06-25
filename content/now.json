@@ -1,0 +1,32 @@
+[
+  {
+    "date": "Jun 2026",
+    "type": "milestone",
+    "text": "score-hub-cli POC green-flagged by Score community in call",
+    "archived": false
+  },
+  {
+    "date": "Apr 2026",
+    "type": "release",
+    "text": "Patent IN202611004758 A1 published · IPO Journal No. 16/2026",
+    "archived": false
+  },
+  {
+    "date": "Apr 2026",
+    "type": "event",
+    "text": "Volunteer at Open Source Day India 2026 · DAIICT Gandhinagar",
+    "archived": false
+  },
+  {
+    "date": "2025",
+    "type": "event",
+    "text": "OpenSearchCon · Linux Foundation sponsored · Japan + Korea",
+    "archived": true
+  },
+  {
+    "date": "2024",
+    "type": "event",
+    "text": "BazelCon 2024 · Linux Foundation sponsored · Mountain View, CA",
+    "archived": true
+  }
+]

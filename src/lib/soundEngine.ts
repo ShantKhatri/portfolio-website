@@ -1,4 +1,4 @@
-// Sound effects utility using Web Audio API — no audio files needed!
+// Sound effects utility using Web Audio API - no audio files needed!
 // All sounds are generated programmatically for zero bundle impact.
 
 class SoundEngine {
@@ -35,7 +35,7 @@ class SoundEngine {
     return () => this.listeners.delete(fn);
   }
 
-  // Achievement unlock sound — triumphant chime
+  // Achievement unlock sound - triumphant chime
   playUnlock() {
     if (this._muted) return;
     const ctx = this.getContext();
@@ -58,7 +58,7 @@ class SoundEngine {
     });
   }
 
-  // Hover / select sound — soft blip
+  // Hover / select sound - soft blip
   playHover() {
     if (this._muted) return;
     const ctx = this.getContext();
@@ -78,7 +78,7 @@ class SoundEngine {
     osc.stop(now + 0.15);
   }
 
-  // Click / confirm — deeper blip
+  // Click / confirm - deeper blip
   playClick() {
     if (this._muted) return;
     const ctx = this.getContext();
@@ -98,7 +98,7 @@ class SoundEngine {
     osc.stop(now + 0.2);
   }
 
-  // Terminal typing — subtle keypress
+  // Terminal typing - subtle keypress
   playType() {
     if (this._muted) return;
     const ctx = this.getContext();
@@ -117,7 +117,7 @@ class SoundEngine {
     osc.stop(now + 0.05);
   }
 
-  // Whoosh — section transition
+  // Whoosh - section transition
   playWhoosh() {
     if (this._muted) return;
     const ctx = this.getContext();
@@ -145,7 +145,7 @@ class SoundEngine {
     noise.start(now);
   }
 
-  // Launch — rocket launch for contact form
+  // Launch - rocket launch for contact form
   playLaunch() {
     if (this._muted) return;
     const ctx = this.getContext();

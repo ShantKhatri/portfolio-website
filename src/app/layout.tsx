@@ -1,117 +1,104 @@
 import type { Metadata } from "next";
-import { ReactNode } from 'react';
-import Navbar from '../components/Navbar';
+import { Comic_Neue, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "next-themes";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
 import "./globals.css";
-import JsonLd from '../components/JsonLd';
-import { AuthProvider } from '@/contexts/AuthContext';
-import { inter, playfair } from './fonts';
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from '@vercel/speed-insights/next';
+
+const comicNeue = Comic_Neue({
+  weight: ["300", "400", "700"],
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: 'Prashantkumar Khatri | Freelance Software Engineer & Open Source Contributor',
-  description: 'Freelance Software Engineer specializing in Full-Stack Development, AI/ML, Test Automation, and Open Source. 2x Google Summer of Code contributor with experience across React, Next.js, Python, and cloud technologies.',
-  keywords: [
-    // Core Professional Keywords (High Search Volume)
-    'full stack developer', 'machine learning engineer', 'automation expert', 
-    'software engineer', 'AI developer', 'tech lead',
-
-    // Framework & Technology Keywords (Trending)
-    'react developer', 'typescript developer', 'next.js expert',
-    'node.js specialist', 'python developer', 'generative AI engineer',
-    'large language models', 'LLM integration', 'ChatGPT API expert',
-    
-    // Specialized Technical Skills (Rising Searches)
-    'test automation', 'CI/CD pipeline expert', 'API integration specialist',
-    'cloud architecture', 'devops engineer', 'mlops specialist',
-    'kubernetes expert', 'docker specialist', 'microservices architect',
-    
-    // Emerging Tech Trends (High Growth Keywords)
-    'AI application development', 'machine learning integration',
-    'GenAI solutions', 'AI-powered web apps', 'LLM fine-tuning specialist',
-    'vector database implementation', 'RAG systems developer',
-    
-    // Industry-Specific Keywords
-    'enterprise software developer', 'fintech developer',
-    'healthtech solutions architect', 'saas developer', 'edtech specialist',
-    
-    // Problem-Solving Keywords (Long Tail)
-    'custom AI solution developer', 'automated testing framework developer',
-    'full stack AI integration expert', 'end-to-end ML pipeline architect',
-    'production ML systems developer', 'AI workflow automation specialist',
-    
-    // Technical Ecosystem Keywords
-    'aws certified developer', 'azure cloud expert', 'google cloud platform',
-    'jest testing expert', 'cypress automation developer', 'github actions specialist',
-    'vercel deployment expert', 'mongodb developer', 'postgresql specialist',
-    
-    // Cutting-Edge Technologies (Future-Proofing)
-    'web3 developer', 'blockchain integration', 'IoT systems architect',
-    'AI agent developer', 'multimodal AI specialist', 'computer vision engineer'
-  ],
-  metadataBase: new URL('https://prashantkhatri.com'),
-  alternates: {
-    canonical: '/',
+  title: {
+    default: "Prashant Khatri · Platform Engineer",
+    template: "Prashant Khatri · %s",
   },
-  creator: 'Prashantkumar Khatri',
-  authors: [{ name: 'Prashantkumar Khatri' }],
-  category: 'Technology',
+  description:
+    "Platform and OSS engineer based in Ahmedabad, India. 2× GSoC at Eclipse Foundation. Active in CNCF Score. Founder of DevCard.",
+  metadataBase: new URL("https://prashantkhatri.com"),
+  alternates: { canonical: "/" },
+  authors: [{ name: "Prashant Khatri" }],
+  creator: "Prashant Khatri",
   robots: {
     index: true,
     follow: true,
     googleBot: {
       index: true,
       follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://prashantkhatri.com',
-    siteName: 'Prashantkumar Khatri | Freelance Software Engineer',
-    title: 'Prashantkumar Khatri | Freelance Software Engineer & Open Source Contributor',
-    description: 'Freelance Software Engineer specializing in Full-Stack Development, AI/ML, Test Automation, and Open Source. 2x Google Summer of Code contributor.',
+    type: "website",
+    locale: "en_US",
+    url: "https://prashantkhatri.com",
+    siteName: "Prashant Khatri",
+    title: "Prashant Khatri · Platform Engineer & OSS Contributor",
+    description:
+      "Platform and OSS engineer. 2× GSoC. CNCF Score contributor. Founder of DevCard. Open to work.",
     images: [
       {
-        url: 'https://prashantkhatri.com/og-image.jpg',
+        url: "/og.png",
         width: 1200,
         height: 630,
-        alt: 'Prashantkumar Khatri - Full Stack & ML Automation Engineer',
-      }
+        alt: "Prashant Khatri · Platform Engineer",
+      },
     ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Prashantkumar Khatri | Freelance Software Engineer',
-    description: 'Freelance Software Engineer specializing in Full-Stack, AI/ML, Test Automation, and Open Source. 2x GSoC contributor.',
-    images: ['https://prashantkhatri.com'],
+    card: "summary_large_image",
+    title: "Prashant Khatri · Platform Engineer",
+    description:
+      "Platform and OSS engineer. 2× GSoC. CNCF Score contributor. Open to work.",
+    images: ["/og.png"],
   },
-  viewport: 'width=device-width, initial-scale=1',
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
-    ],
-    apple: [{ url: '/apple-touch-icon.png' }],
-    other: [{ rel: 'manifest', url: '/site.webmanifest' }],
+    icon: [{ url: "/favicon.ico", sizes: "any" }],
   },
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <head />
-      <body className="font-sans">
-        <JsonLd />
-        <Navbar />
-        <Analytics/>
-        <SpeedInsights />
-        <AuthProvider>
-          <main className="relative z-10">{children}</main>
-        </AuthProvider>
+    <html
+      lang="en"
+      className={`${comicNeue.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {process.env.NEXT_PUBLIC_UMAMI_ID && (
+          <script
+            defer
+            src={process.env.NEXT_PUBLIC_UMAMI_URL || "https://analytics.umami.is/script.js"}
+            data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
+          />
+        )}
+      </head>
+      <body className="font-sans bg-[var(--bg)] text-[var(--fg)]">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange={false}
+        >
+          <Nav />
+          <main className="max-w-[720px] mx-auto px-5">
+            {children}
+          </main>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

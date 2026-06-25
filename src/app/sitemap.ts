@@ -1,30 +1,28 @@
-import { getAllBlogPosts } from '@/services/blogService';
+import { MetadataRoute } from "next";
+import { PROJECTS } from "@/lib/data";
 
-export default async function sitemap() {
-  // Get all blog posts
-  const posts = await getAllBlogPosts();
-  
-  // Generate blog post URLs
-  const blogUrls = posts.map((post) => ({
-    url: `https://prashantkhatri.com/blog/${post.slug}`,
-    lastModified: post.updatedAt || post.date,
-    changeFrequency: 'weekly',
+export default function sitemap(): MetadataRoute.Sitemap {
+  const base = "https://prashantkhatri.com";
+
+  const staticRoutes = [
+    { url: base, priority: 1.0 },
+    { url: `${base}/work`, priority: 0.9 },
+    { url: `${base}/writing`, priority: 0.8 },
+    { url: `${base}/community`, priority: 0.7 },
+    { url: `${base}/about`, priority: 0.7 },
+    { url: `${base}/patents`, priority: 0.6 },
+    { url: `${base}/contact`, priority: 0.6 },
+  ];
+
+  const projectRoutes = PROJECTS.map((p) => ({
+    url: `${base}/work/${p.slug}`,
     priority: 0.8,
   }));
 
-  // Static URLs
-  const routes = [
-    '',
-    '/blog',
-    '/about',
-    '/contact',
-    '/projects',
-  ].map((route) => ({
-    url: `https://prashantkhatri.com${route}`,
-    lastModified: new Date().toISOString(),
-    changeFrequency: 'monthly',
-    priority: route === '' ? 1.0 : 0.9,
+  return [...staticRoutes, ...projectRoutes].map((r) => ({
+    url: r.url,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: r.priority,
   }));
-
-  return [...routes, ...blogUrls];
-};
+}
