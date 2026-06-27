@@ -187,7 +187,7 @@ export default async function HomePage() {
             email
           </a>
           <a
-            href="https://linkedin.com/in/prashant-khatri"
+            href="https://www.linkedin.com/in/prashantkumar-khatri/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-[18px] px-4 py-2 border border-[var(--border-mid)] rounded-full text-[var(--fg-muted)] hover:text-[var(--fg)] transition-colors duration-150"

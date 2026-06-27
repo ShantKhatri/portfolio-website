@@ -116,7 +116,7 @@ export default function RootLayout({
               },
               sameAs: [
                 "https://github.com/ShantKhatri",
-                "https://linkedin.com/in/prashant-khatri",
+                "https://www.linkedin.com/in/prashantkumar-khatri/",
                 "https://rootcause.hashnode.dev"
               ]
             })
